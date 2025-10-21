@@ -8,47 +8,21 @@ import { Audio } from 'expo-av';
 export default function App() {
   // useState hook to store the backend message received from FastAPI
   const [apiMessage, setApiMessage] = useState('');
+  // State management
+  // Holding the recording object
+  const [recording, setRecording] = useState(null);
+  // Tracks if recording is active
+  const [isRecording, setIsRecording] = useState(false);
+  // Stores the file path of the audio file - Uniform Resource Identifier
+  const [recordingUri, setRecordingUri] = useState(null);
+  // Store recording duration in seconds
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  // Timer for recording duration
+  const durationInterval = useRef(null); 
 
-  /* Async function to test connection to the backend API
-  const testBackendConnection = async () => {
-  try {
-    // Using my local ip to connect via expo go app
-    const response = await fetch('http://192.168.1.34:8000/');
-    // Parse the JSON response from FastAPI
-    const data = await response.json();
-    // Save the message to state and show an alert
-    setApiMessage(data.message);
-    // Alerts....
-    Alert.alert('Success!', data.message);
-  } catch (error) {
-    Alert.alert('Error', 'Could not connect to backend');
-    console.error(error);
-  }
-};
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bird Identifier App</Text>
-      <Text style={styles.subtitle}>Frontend is running</Text>
-    
-      <Button 
-        title="Test Backend Connection" 
-        onPress={testBackendConnection}
-      />
-    
-    { Conditionally render the backend message if it exists }
-    {apiMessage ? (
-        <Text style={styles.apiMessage}>{apiMessage}</Text>
-      ) : null}
-      
-      <StatusBar style="auto" />
-    
-    </View>
-  );
-}*/
-
-// Request microphone permissions
-const getPermissions = async () => {
+  // Request microphone permissions
+  const getPermissions = async () => {
   try {
     // Uses Expo's audio module to trigger the system prompt
     const { status } = await Audio.requestPermissionsAsync();
@@ -70,19 +44,66 @@ const getPermissions = async () => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Test Microphone Permission</Text>
+  // Start recording
+  const startRecording = async () => {
+    try {
+      // Check permissions first, if not granted, exit function
+      const hasPermission = await getPermissions();
+      if (!hasPermission) return;
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={getPermissions} // call it when pressed
-      >
-        <Text style={styles.buttonText}>Request Microphone Access</Text>
-      </TouchableOpacity>
-    </View>
-  );
+      // Reset previous states for a new recording session
+      setRecordingDuration(0);
+
+      // Configure audio mode for recording
+      await Audio.setAudioModeAsync({
+        // Allows recording on iOS and iOS silent mode
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+      console.log('Starting recording...');
+
+      // Create and start recording
+      const { recording } = await Audio.Recording.createAsync(
+        // Use high quality preset for better audio fidelity (Expo Go standard)
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+
+      // Store the recording object and update the state to indicate recording is in progress
+      setRecording(recording);
+      setIsRecording(true);
+
+      // Start duration timer
+      durationInterval.current = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+
+      console.log('Recording started successfully');
+    // Catch any errors that occur during the recording start process
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      Alert.alert('Error', 'Could not start recording. Please try again.');
+      setIsRecording(false);
+    }
+  };
+
+    // For testing
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Test Start Recording</Text>
+          <TouchableOpacity style={[styles.button, styles.startButton]} onPress={startRecording}>
+            <Text style={styles.buttonText}>Start Recording</Text>
+          </TouchableOpacity> 
+        {isRecording && (
+          <Text style={styles.durationText}>
+            Recording... {recordingDuration}s
+          </Text>
+        )}
+      </View>
+    );
+  
 }
+
+
 
 
 
