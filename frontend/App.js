@@ -86,13 +86,69 @@ export default function App() {
     }
   };
 
+  // Stop recording
+  const stopRecording = async () => {
+    try {
+      console.log('Stopping recording...');
+
+      // Ensure there is an active recording to stop, exit otherwise
+      if (!recording) {
+        Alert.alert('Error', 'No active recording found');
+        return;
+      }
+
+      // Clear duration timer
+      if (durationInterval.current) {
+        // Stop the interval and reset the ref
+        clearInterval(durationInterval.current);
+        durationInterval.current = null;
+      }
+
+      // Stop and unload the recording
+      // Finalize the recording and make it available on disk
+      await recording.stopAndUnloadAsync();
+      // Reset audio mode to disable recording capabilities
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false, // Force the disable for iOS
+      });
+
+      // Get the recording URI of the saved file and log it
+      const uri = recording.getURI();
+      console.log('Recording stopped. File location:', uri);
+
+      // Reset the recording object and update recording state
+      setRecordingUri(uri);
+      setRecording(null);
+      setIsRecording(false);
+
+       // Notify the user that recording is complete and ready to upload
+      Alert.alert(
+        'Recording Complete!',
+        `Duration: ${recordingDuration} seconds\n\nReady to upload to backend.`,
+        [{ text: 'OK' }]
+      );
+    // Catch any errors that occur during the recording stop process
+    } catch (error) {
+      console.error('Failed to stop recording:', error);
+      Alert.alert('Error', 'Could not stop recording properly.');
+      setIsRecording(false);
+    }
+  };
+
     // For testing
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Test Start Recording</Text>
+        {!isRecording ? (
           <TouchableOpacity style={[styles.button, styles.startButton]} onPress={startRecording}>
             <Text style={styles.buttonText}>Start Recording</Text>
           </TouchableOpacity> 
+        ) : (
+          <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={stopRecording}>
+            <Text style={styles.buttonText}>Stop Recording</Text>
+          </TouchableOpacity>
+        )}
+
         {isRecording && (
           <Text style={styles.durationText}>
             Recording... {recordingDuration}s
@@ -100,7 +156,6 @@ export default function App() {
         )}
       </View>
     );
-  
 }
 
 
