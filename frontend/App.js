@@ -17,9 +17,12 @@ export default function App() {
   const [recordingUri, setRecordingUri] = useState(null);
   // Store recording duration in seconds
   const [recordingDuration, setRecordingDuration] = useState(0);
+  // Checks if upload is in progress
+  const [isUploading, setIsUploading] = useState(false);
+  // Checks if upload was successful
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   // Timer for recording duration
   const durationInterval = useRef(null); 
-
 
   // Request microphone permissions
   const getPermissions = async () => {
@@ -135,6 +138,85 @@ export default function App() {
     }
   };
 
+  // Upload audio to backend
+  const uploadAudio = async () => {
+    // Ensure there is a recording URI to upload, exit otherwise
+    if (!recordingUri) {
+      Alert.alert('Error', 'No recording to upload');
+      return;
+    }
+
+    // Setting the state to indicate that the upload is in progress
+    setIsUploading(true);
+    setUploadSuccess(false);
+
+    try {
+      console.log('Uploading audio to backend...');
+
+      // Create form data to hold the audio file and metadata
+      const formData = new FormData();
+      
+      // Extract filename from URI
+      const uriParts = recordingUri.split('/');
+      // Get the last part as filename, -1 as array starts at 0
+      const filename = uriParts[uriParts.length - 1];
+
+      // Append the audio file tothe formData obj
+      formData.append('audio', {
+        // The URI, Expo's default recording format is m4a
+        // and a fallback default name 
+        uri: recordingUri,
+        type: 'audio/m4a', 
+        name: filename || 'recording.m4a',
+      });
+
+      // Append the duration of the recording as a string
+      formData.append('duration', recordingDuration.toString());
+
+      // Define the backend URL, my IP for now
+      const BACKEND_URL = 'http://localhost:8000'; 
+      
+      console.log('Sending to:', `${BACKEND_URL}/upload-audio`);
+
+      // Send a POST request to the backend with the audio data
+      const response = await fetch(`${BACKEND_URL}/upload-audio`, {
+        // Body contains all data
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      // Check if the response is not ok (status code outside 200-299 range)
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+
+      // Parse the backend response
+      const result = await response.json();
+      console.log('Upload successful:', result);
+
+      // Update state to reflect successful upload
+      setUploadSuccess(true);
+      // Then show success alert to user with backend response data
+      Alert.alert(
+        'Upload Successful! ✅',
+        `File saved on backend:\n${result.filename}\nSize: ${result.size_mb} MB`,
+        [{ text: 'Great!' }]
+      );
+    // Catch any errors that occur during the upload process
+    } catch (error) {
+      console.error('Upload failed:', error);
+      Alert.alert(
+        'Upload Failed',
+        'Could not upload audio to backend. Make sure the backend server is running.\n\nError: ' + error.message
+      );
+    } finally {
+      // Revert uploading state regardless of success or failure
+      setIsUploading(false);
+    }
+  };
+
     // For testing
     return (
       <View style={styles.container}>
@@ -156,6 +238,7 @@ export default function App() {
         )}
       </View>
     );
+    
 }
 
 
