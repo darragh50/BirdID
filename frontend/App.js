@@ -174,7 +174,7 @@ export default function App() {
       formData.append('duration', recordingDuration.toString());
 
       // Define the backend URL, my IP for now
-      const BACKEND_URL = 'http://localhost:8000'; 
+      const BACKEND_URL = 'http://192.168.1.34:8000'; 
       
       console.log('Sending to:', `${BACKEND_URL}/upload-audio`);
 
@@ -217,57 +217,251 @@ export default function App() {
     }
   };
 
-    // For testing
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Test Start Recording</Text>
+  // Render the main application UI
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Bird Identifier</Text>
+      <Text style={styles.subtitle}>Record a bird song to identify it</Text>
+
+      <View style={styles.recordingSection}>
+        {/* Recording Status */}
+        {isRecording && (
+          <View style={styles.recordingIndicator}>
+            <View style={styles.recordingDot} />
+            <Text style={styles.recordingText}>Recording...</Text>
+          </View>
+        )}
+
+        {/* Duration Display */}
+        {(isRecording || recordingUri) && (
+          <Text style={styles.durationText}>
+            Duration: (recordingDuration)
+          </Text>
+        )}
+
+        {/* Main Recording Button */}
         {!isRecording ? (
-          <TouchableOpacity style={[styles.button, styles.startButton]} onPress={startRecording}>
-            <Text style={styles.buttonText}>Start Recording</Text>
-          </TouchableOpacity> 
+          <TouchableOpacity
+            style={[styles.recordButton, styles.startButton]}
+            onPress={startRecording}
+            disabled={isUploading}
+          >
+            <Text style={styles.recordButtonText}>Start Recording</Text>
+          </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={stopRecording}>
-            <Text style={styles.buttonText}>Stop Recording</Text>
+          <TouchableOpacity
+            style={[styles.recordButton, styles.stopButton]}
+            onPress={stopRecording}
+          >
+            <Text style={styles.recordButtonText}>Stop Recording</Text>
           </TouchableOpacity>
         )}
 
-        {isRecording && (
-          <Text style={styles.durationText}>
-            Recording... {recordingDuration}s
-          </Text>
+        {/* Upload Button (shown after recording stops) */}
+        {recordingUri && !isRecording && (
+          <TouchableOpacity
+            style={[
+              styles.uploadButton,
+              isUploading && styles.uploadButtonDisabled,
+            ]}
+            onPress={uploadAudio}
+            disabled={isUploading}
+          >
+            <Text style={styles.uploadButtonText}>
+              {isUploading ? 'Uploading...' : 'Upload to Backend'}
+            </Text>
+          </TouchableOpacity>
         )}
+
+        {/* Success Indicator */}
+        {uploadSuccess && (
+          <View style={styles.successBox}>
+            <Text style={styles.successText}>Recording saved successfully</Text>
+            <Text style={styles.successSubtext}>
+              Backend has received and stored your audio file
+            </Text>
+          </View>
+        )}
+
+        {/* Instructions */}
+        <View style={styles.instructionsBox}>
+          <Text style={styles.instructionsTitle}>Instructions:</Text>
+          <Text style={styles.instructionsText}>
+            1. Click "Start Recording" button{'\n'}
+            2. Hold phone near bird song (10-30 seconds){'\n'}
+            3. Click "Stop Recording" when done{'\n'}
+            4. Click "Upload to Backend" to save
+          </Text>
+        </View>
+
+        {/* Debug Info */}
+        <View style={styles.debugBox}>
+          <Text style={styles.debugText}>
+            Status: {isRecording ? 'Recording' : recordingUri ? 'Ready to upload' : 'Idle'}
+          </Text>
+          {recordingUri && (
+            <Text style={styles.debugText} numberOfLines={1}>
+              File: {recordingUri.split('/').pop()}
+            </Text>
+          )}
+        </View>
       </View>
-    );
-    
+      <StatusBar style="auto" />
+    </ScrollView>
+  );
 }
 
 
-
-
-
-
+// Styling
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    flexGrow: 1,
+    backgroundColor: '#f5f5f5',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-
+    paddingTop: 60,
+    paddingBottom: 40,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
+    color: '#2c3e50',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
-    marginBottom: 30,
+    color: '#7f8c8d',
+    marginBottom: 40,
   },
-  apiMessage: {
-    marginTop: 20,
+  recordingSection: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  recordingIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#ffe6e6',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  recordingDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#e74c3c',
+    marginRight: 10,
+  },
+  recordingText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#e74c3c',
+  },
+  durationText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#2c3e50',
+    fontFamily: 'monospace',
+  },
+  recordButton: {
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    borderRadius: 50,
+    marginBottom: 20,
+    minWidth: 250,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  startButton: {
+    backgroundColor: '#27ae60',
+  },
+  stopButton: {
+    backgroundColor: '#e74c3c',
+  },
+  recordButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  uploadButton: {
+    backgroundColor: '#3498db',
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 25,
+    minWidth: 250,
+    alignItems: 'center',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  uploadButtonDisabled: {
+    backgroundColor: '#95a5a6',
+  },
+  uploadButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  successBox: {
+    backgroundColor: '#d4edda',
+    borderColor: '#c3e6cb',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 20,
+    width: '100%',
+  },
+  successText: {
+    color: '#155724',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  successSubtext: {
+    color: '#155724',
     fontSize: 14,
-    color: 'green',
+  },
+  instructionsBox: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 16,
+    marginTop: 20,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  instructionsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#2c3e50',
+  },
+  instructionsText: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
+  },
+  debugBox: {
+    backgroundColor: '#ecf0f1',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 20,
+    width: '100%',
+  },
+  debugText: {
+    fontSize: 12,
+    color: '#7f8c8d',
+    fontFamily: 'monospace',
   },
 });
+
+
