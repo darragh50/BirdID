@@ -217,6 +217,17 @@ export default function App() {
     }
   };
 
+  // Make UI look nicer, 65 goes to 1:05 
+  const formatDuration = (seconds) => {
+    // Calculate the number of full minutes with Math.floor
+    const mins = Math.floor(seconds / 60);
+    // Calculate the remaining seconds after removing full minutes
+    const secs = seconds % 60;
+    // Return the formatted string
+    // .padStart ensures two digits for seconds
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
   // Render the main application UI
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -235,7 +246,7 @@ export default function App() {
         {/* Duration Display */}
         {(isRecording || recordingUri) && (
           <Text style={styles.durationText}>
-            Duration: (recordingDuration)
+            Duration: {formatDuration(recordingDuration)}
           </Text>
         )}
 
