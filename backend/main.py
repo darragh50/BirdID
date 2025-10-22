@@ -168,4 +168,20 @@ def list_recordings():
             "message": f"Failed to list recordings: {str(e)}"
         }
 
+# Endpoint to delete a specific recording by filename
+@app.delete("/delete-recording/{filename}")
+def delete_recording(filename: str):
+    """
+    Delete a specific recording from the backend
+    Useful for cleanup during development
+    """
+    try:
+        return   
+    # Handle exceptions during deleting recordings     
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Failed to delete recording: {str(e)}"
+        }
+
     
