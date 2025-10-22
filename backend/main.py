@@ -8,6 +8,8 @@ from pathlib import Path
 from datetime import datetime
 # Import shutil to save uploaded files
 import shutil
+# Import os for operating system interactions
+import os
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
