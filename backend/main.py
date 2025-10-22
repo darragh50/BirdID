@@ -59,7 +59,7 @@ async def upload_audio(
     duration: str = Form(None)
 ):
     """
-    Endpoint to receive audio recordings from the frontend.
+    Endpoint to receive audio recordings from the frontend
     
     Parameters:
     - audio: The audio file (Default Expo m4a format)
@@ -121,3 +121,51 @@ async def upload_audio(
             "success": False,
             "message": f"Failed to upload audio: {str(e)}"
         }
+    
+# Endpoint to list all recordings in the upload directory
+# This is useful for debugging and verifying uploads
+@app.get("/list-recordings")
+def list_recordings():
+    """
+    List all recordings currently stored on the backend
+    Useful for debugging and seeing what's been uploaded
+    """
+    try:
+        # Create an empty list to hold all the file details
+        recordings = []
+        
+        # Loop through every file in the uploads directory
+        # Path.glob("*") lists all items in the given path
+        for file_path in UPLOAD_DIR.glob("*"):
+            # Only process actual files (not directories/folders)
+            if file_path.is_file():
+                # Get file size in bytes using .stat and st.size
+                file_size = file_path.stat().st_size
+                # Convert bytes to megabytes, rounded to 2 decimal places, like before
+                file_size_mb = round(file_size / (1024 * 1024), 2)
+                
+                # Add each file's details to the list
+                recordings.append({
+                    "filename": file_path.name,
+                    "size_mb": file_size_mb,
+                    "created_at": datetime.fromtimestamp(
+                        file_path.stat().st_ctime # Timestamp of creation time using stat and st_ctime
+                    ).strftime("%Y-%m-%d %H:%M:%S")
+                })
+        
+        # Then return a json response to the client with all recordings
+        return {
+            "success": True,
+            "count": len(recordings), # Number of recordings found
+            "recordings": recordings, # List of recording details
+            "upload_directory": str(UPLOAD_DIR.absolute()) # Absolute path for reference
+        }
+    
+    # Handle exceptions during listing recordings
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Failed to list recordings: {str(e)}"
+        }
+
+    
