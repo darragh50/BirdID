@@ -200,7 +200,7 @@ export default function App() {
       setUploadSuccess(true);
       // Then show success alert to user with backend response data
       Alert.alert(
-        'Upload Successful! ✅',
+        'Upload Successful!',
         `File saved on backend:\n${result.filename}\nSize: ${result.size_mb} MB`,
         [{ text: 'Great!' }]
       );
