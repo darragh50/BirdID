@@ -176,8 +176,27 @@ def delete_recording(filename: str):
     Useful for cleanup during development
     """
     try:
-        return   
-    # Handle exceptions during deleting recordings     
+        # Build the full file path using the uploads directory and the given filename
+        file_path = UPLOAD_DIR / filename
+        
+        # Check if the file actually exists
+        # If not, return a message
+        if not file_path.exists():
+            return {
+                "success": False,
+                "message": f"File not found: {filename}"
+            }
+        
+        # If it exists, delete the file using unlink()
+        file_path.unlink()
+        
+        # Return a success message to confirm deletion
+        return {
+            "success": True,
+            "message": f"Recording deleted: {filename}"
+        }
+    
+    # Handle exceptions during deleting recordings
     except Exception as e:
         return {
             "success": False,
