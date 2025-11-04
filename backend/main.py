@@ -10,6 +10,10 @@ from datetime import datetime
 import shutil
 # Import os for operating system interactions
 import os
+# Import database session 
+from databases import SessionLocal
+# Import text for raw SQL queries
+from sqlalchemy import text
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
@@ -202,5 +206,31 @@ def delete_recording(filename: str):
             "success": False,
             "message": f"Failed to delete recording: {str(e)}"
         }
+    
+# Database health check endpoint
+@app.get("/health/database")
+def database_health_check():
+    """
+    Check if the database connection is working
+    """
+    # Test database connection
+    try:
+        # Create a new database session
+        db = SessionLocal()
+        result = db.execute(text("SELECT 1"))
+        db.close()
 
+        # If successful, return healthy status
+        return{
+            "status": "healthy",
+            "database": "connected",
+            "message": "PostgreSQL connection successful"
+        }
+    # Else, catch exceptions and return unhealthy status
+    except Exception as e:
+        return{
+            "status": "unhealthy",
+            "database": "disconnected",
+            "message": {str(e)}
+        }
     
