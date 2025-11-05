@@ -69,4 +69,29 @@ def upload_file_to_s3(file_path, object_name=None):
         print(f"The file {file_path} was not found.")
         return None
     
+# Function to delete a file from the specified S3 bucket
+def delete_file_from_S3(object_name):
+    """
+    Delete a file from S3 bucket
+    
+    args:
+        object_name (str): S3 object name to delete
+
+    returns:
+        bool: True if file was deleted, False otherwise
+    """
+    try:
+        # Delete the file
+        s3_cient.delete_object(Bucket=S3_BUCKET_NAME, Key=object_name)
+        
+        # Return message and true if deletion was successful
+        print("File deleted successfully: " + object_name)
+        return True
+    
+    # Handle ClientError exceptions during deletion
+    except ClientError as e:
+        # Print the error and return false if deletion fails
+        print(f"Error deleting file from S3: {e}")
+        return False
+
 
