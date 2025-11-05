@@ -30,6 +30,43 @@ s3_cient = boto3.client(
     region_name=AWS_REGION
 )
 
+# Function to upload a file to the specified S3 bucket
+def upload_file_to_s3(file_path, object_name=None):
+    """
+    Upload a file to an S3 bucket
+    
+    args:
+        file_path (str): Path to the file to upload
+        object_name (str): S3 object name. If not specified, file_path will be used
 
+    returns:
+        str: S3 URL of uploaded file, or none if upload has failed
+    """
+
+    # If S3 object_name was not specified, use the basename of file_path
+    if object_name is None:
+        object_name = os.path.basename(file_path)
+
+    try:
+        # Upload the file
+        s3_cient.upload_file(file_path, S3_BUCKET_NAME, object_name)
+        
+        # Generate the S3 URL
+        s3_url = f"https://{S3_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{object_name}"
+        
+        # Return the S3 URL of the uploaded file
+        return s3_url
+    
+    # Handle ClientError exceptions during upload
+    except ClientError as e:
+        # Print the error and return None if upload fails
+        print(f"Error uploading file to S3: {e}")
+        return None
+    
+    # Handle case where the file does not exist
+    except FileNotFoundError:
+        # Print error message with file path and return None
+        print(f"The file {file_path} was not found.")
+        return None
     
 
