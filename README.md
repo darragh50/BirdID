@@ -1,6 +1,6 @@
 # Bird Identifier App
 
-A mobile application for identifying birds by their song using AI.
+A mobile application for identifying birds by their song using AI
 
 ## Tech Stack
 
@@ -36,7 +36,7 @@ npm start
 - [x] Basic backend with FastAPI
 - [x] Frontend-backend connection test
 - [x] CI/CD pipeline with GitHub Actions
-- [ ] Database integration (PostgreSQL)
+- [x] Database integration (PostgreSQL)
 - [ ] File storage (AWS S3)
 - [ ] Authentication (Firebase)
 - [ ] BirdNET integration

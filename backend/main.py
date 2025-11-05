@@ -224,7 +224,7 @@ def get_recordings(db: Session = Depends(get_db)):
         }
     
 # Endpoint to get a specific recording by its ID
-@app.get("/recording/{recording_id}")
+@app.get("/recordings/{recording_id}")
 def get_recording_by_id(recording_id: int, db: Session = Depends(get_db)):
     """
     Get a specific recording by its ID
