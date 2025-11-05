@@ -123,4 +123,27 @@ def generate_presigned_url(object_name, expiration=3600):
         print(f"Error generating presigned URL: {e}")
         return None
 
+# Function to test S3 connection
+def test_s3_connection():
+    """
+    Test the connection and bucket access
+    """
+    try:
+        # List objects in the specified S3 bucket
+        # maxkeys set to 1 is to check if any files exist at all
+        response = s3_cient.list_objects_v2(Bucket=S3_BUCKET_NAME, MaxKeys=1)
+
+        # Print success message with bucket details
+        print(f"S3 connection successful")
+        print(f"Bucket: {S3_BUCKET_NAME}")
+        print(f"Region: {AWS_REGION}")
+
+        # Return true if connection is successful
+        return True
+    
+    # Handle ClientError exceptions during connection test
+    except ClientError as e:
+        # Print the error and return false if connection fails
+        print(f"Error connecting to S3 bucket: {e}")
+        return False
 
