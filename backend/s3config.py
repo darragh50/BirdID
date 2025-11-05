@@ -94,4 +94,33 @@ def delete_file_from_S3(object_name):
         print(f"Error deleting file from S3: {e}")
         return False
 
+# Function to generate a presigned URL for an S3 object
+def generate_presigned_url(object_name, expiration=3600):
+    """
+    Generate a presigned URL to share an S3 object
+    
+    args:
+        object_name (str): S3 object name
+        expiration (int): Time in seconds for the presigned URL to remain valid
+
+    returns:
+        str: Presigned URL as string. If error, returns none
+    """
+    try:
+        # Generate a temporary, secure URL that allows anyone to download the S3 object
+        # without needing AWS credentials. But only for a limited time        
+        url = s3_cient.generate_presigned_url( 
+            'get_object',
+            Params={'Bucket': S3_BUCKET_NAME, 'Key': object_name},
+            ExpiresIn=expiration)
+        
+        # Return the presigned URL
+        return url
+    
+    # Handle ClientError exceptions during URL generation
+    except ClientError as e:
+        # Print the error and return None if generation fails
+        print(f"Error generating presigned URL: {e}")
+        return None
+
 
