@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 # Import database models
 from models import Recordings, Base
 # Import s3config functions
-from s3config import upload_file_to_s3, delete_file_from_s3, test_s3_connection
+from s3config import upload_file_to_s3, delete_file_from_S3, test_s3_connection
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
@@ -375,7 +375,7 @@ def list_recordings():
 @app.delete("/recordings/{recording_id}")
 def delete_recording(recording_id: int, db: Session = Depends(get_db)):
     """
-    Delete a specific recording from the database and file system
+    Delete a specific recording from the database and S3
     """
     try:
         recording = db.query(Recordings).filter(Recordings.id == recording_id).first()
@@ -388,11 +388,11 @@ def delete_recording(recording_id: int, db: Session = Depends(get_db)):
                 "message": f"Recording with ID {recording_id} not found in database."
             }
         
-        # If it exists, delete the file using unlink()
-        file_path = Path(recording.file_path)
-        if file_path.exists():
-            file_path.unlink()
-            print(f"Deleted file: {file_path}")
+        # Extract the filename from the S3 URL
+        filename = recording.filename
+
+        # Delete the file from S3
+        s3_deleted = delete_file_from_s3(filename)
 
         # Then delete the database record
         db.delete(recording)
@@ -401,11 +401,14 @@ def delete_recording(recording_id: int, db: Session = Depends(get_db)):
         # Return a success message to confirm deletion
         return {
             "success": True,
-            "message": f"Recording {recording_id} deleted:"
+            "message": f"Recording {recording_id} deleted:",
+            "s3_deleted": s3_deleted,
+            "database_deleted": True
         }
     
     # Handle exceptions during deleting recordings
     except Exception as e:
+        db.rollback()
         return {
             "success": False,
             "message": f"Failed to delete recording: {str(e)}"

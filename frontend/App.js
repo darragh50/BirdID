@@ -200,9 +200,13 @@ export default function App() {
       setUploadSuccess(true);
       // Then show success alert to user with backend response data
       Alert.alert(
-        'Upload Successful!',
-        `File saved on backend:\n${result.filename}\nSize: ${result.size_mb} MB\nDatabase ID: ${result.database_id}`,
-        [{ text: 'Great!' }]
+        'Upload Successful',
+        `File saved to cloud storage:\n` + 
+        `Filename: ${result.filename}\n` +
+        `Size: ${result.size_mb}\n` +
+        `Storage: ${result.storage}\n` +
+        `Database ID: ${result.database_id}`, 
+        [{ text: 'Great' }]
       );
     // Catch any errors that occur during the upload process
     } catch (error) {
