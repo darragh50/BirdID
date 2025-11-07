@@ -59,6 +59,8 @@ def read_root():
         "version": "1.0.0",
         "endpoints": {
             "health": "/health",
+            "database_health": "/health/database",
+            "s3_health": "/health/s3",
             "upload": "/upload-audio"
         }
     }
@@ -99,6 +101,25 @@ def database_health_check():
             "status": "unhealthy",
             "database": "disconnected",
             "message": {str(e)}
+        }
+    
+# S3 health check endpoint
+@app.get("/health/s3")
+def s3_health_check():
+    """
+    Check if the S3 connection is working
+    """
+    if test_s3_connection():
+        return {
+            "status": "healthy",
+            "s3": "connected",
+            "message": "S3 connection successful"
+        }
+    else:
+        return {
+            "status": "unhealthy",
+            "s3": "disconnected",
+            "message": "Failed to connect to S3"
         }
 
 # Endpoint to handle audio file uploads
