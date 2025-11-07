@@ -18,6 +18,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 # Import database models
 from models import Recordings, Base
+# Import s3config functions
+from s3config import upload_file_to_s3, delete_file_from_s3, test_s3_connection
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
@@ -34,6 +36,20 @@ app.add_middleware(
 # Create uploads directory if it doesn't exist
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Test database connection on startup
+@app.on_event("startup")
+async def startup_event():
+    """
+    Run on app startup
+    Test database connection to ensure it's working
+    """
+    print("Testing S3 connection")
+    if test_s3_connection():
+        print("S3 connection successful")
+    else:
+        print("S3 connection failed")
+
 
 # Define a route for the root URL "/" with a default message too
 @app.get("/")
