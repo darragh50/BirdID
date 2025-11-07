@@ -1,10 +1,20 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
 
-# Database connection URL for PostgreSQL
-# Format : postgresql://<username>:<password>@<host>:<port>/<database_name>
-DATABASE_URL = "postgresql://postgres:admin@localhost:5432/bird_identifer_db"
+# Load environment variables from .env file
+load_dotenv()
+
+# Database URL from environment variable
+# Rather than having it hardcoded, 
+# I fetch it from an environment variable for security and flexibility
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Ensure DATABASE_URL is set and return an error if not
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL variable is not set")
 
 # Create databse engine
 engine = create_engine(DATABASE_URL)
