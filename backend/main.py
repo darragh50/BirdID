@@ -133,6 +133,7 @@ async def upload_audio(
 ):
     """
     Endpoint to receive audio recordings from the frontend
+    Uploads to S3 and saves S3 URL to database
     
     Parameters:
     - audio: The audio file (Default Expo m4a format)
@@ -140,8 +141,11 @@ async def upload_audio(
     - db: Database session
     
     Returns:
-    - Success message with file details and database record ID
+    - Success message with file details, database record ID, and S3 URL
     """
+    # Initialize temp_file_path to None
+    temp_file_path = None
+
     try:
         # Generate unique filename with timestamp
         # strftime() formats datetime object in the desired string format
@@ -154,19 +158,28 @@ async def upload_audio(
         unique_filename = f"bird_recording_{timestamp}{file_extension}"
         
         # Full path where file will be saved. UPLOAD_DIR is a Path object
-        file_path = UPLOAD_DIR / unique_filename
+        temp_file_path = UPLOAD_DIR / unique_filename
         
         # Use with to safely open/close the file incase an error happens
         # Open the target file path &
         # Specify write binary mode as buffer because audio is binary not text
-        with file_path.open("wb") as buffer:
+        with temp_file_path.open("wb") as buffer:
             # Then copy the contents of the uploaded audio file into this buffer using shutil
             shutil.copyfileobj(audio.file, buffer)
         
         # Get file size in bytes using .stat() and st.size tells me exact file size
-        file_size = file_path.stat().st_size
+        file_size = temp_file_path.stat().st_size
         # Convert bytes to megabytes, and round to 2 decimal places
         file_size_mb = round(file_size / (1024 * 1024), 2)
+
+        # Upload the file to S3
+        s3_url = upload_file_to_s3(str(temp_file_path), unique_filename)
+
+        # If S3 upload failed, raise an exception
+        if not s3_url:
+            raise Exception("Failed to upload file to S3")
+        
+        print(f"File uploaded to S3 successfully")
 
         # Convert duration to float if provided, else None
         duration_float = float(duration) if duration else None
@@ -175,7 +188,7 @@ async def upload_audio(
         db_recording = Recordings(
             filename = unique_filename,
             original_filename = original_filename,
-            file_path = str(file_path.absolute()),  # Store absolute path as string
+            file_path = s3_url,
             duration = duration_float,
             file_size_bytes = file_size,
             file_size_mb = file_size_mb
@@ -186,23 +199,27 @@ async def upload_audio(
         db.commit()
         db.refresh(db_recording)  # Refresh to get the generated ID & timestamp
         
-        # Log the successful upload
+        # Log the successful database upload
         print(f"Audio file saved successfully:")
+        print(f"ID: {db_recording.id}")
         print(f"Filename: {unique_filename}")
+        print(f"S3 URL: {s3_url}")
         print(f"Size: {file_size_mb} MB")
         print(f"Duration: {duration} seconds")
-        print(f"Local Path: {file_path.absolute()}")
-        print(f"Database Record ID: {db_recording.id}")
-        print(f"Created At: {db_recording.upload_time}")
+
+        # Clean up temp file
+        if temp_file_path and temp_file_path.exists():
+            temp_file_path.unlink()
         
         # Return success response with file and database details
         return {
             "success": True,
-            "message": "Audio file uploaded and saved successfully",
+            "message": "Audio file uploaded and successfully saved to S3",
             "database_id": db_recording.id,
             "filename": unique_filename,
             "original_filename": original_filename,
-            "file_path": str(file_path.absolute()),  # Convert path object to string
+            "s3_url": s3_url, 
+            "storage": "S3",
             "size_bytes": file_size,
             "size_mb": file_size_mb,
             "duration_seconds": duration_float,
@@ -213,6 +230,11 @@ async def upload_audio(
     # Handle exceptions during file upload
     except Exception as e:
         print(f"Error uploading audio: {str(e)}")
+
+        # Clean up temp file if it exists
+        if temp_file_path and temp_file_path.exists():
+            temp_file_path.unlink()
+
         db.rollback()  # Rollback in case of error during DB operations
         return {
             "success": False,
@@ -239,6 +261,7 @@ def get_recordings(db: Session = Depends(get_db)):
                 "id": recording.id,
                 "filename": recording.filename,
                 "original_filename": recording.original_filename,
+                "s3_url": recording.file_path,
                 "duration": recording.duration,
                 "size_mb": recording.file_size_mb,
                 "identified_species": recording.identified_species,
@@ -284,7 +307,7 @@ def get_recording_by_id(recording_id: int, db: Session = Depends(get_db)):
                 "id": recording.id,
                 "filename": recording.filename,
                 "original_filename": recording.original_filename,
-                "file_path": recording.file_path,
+                "s3_url": recording.file_path,
                 "duration": recording.duration,
                 "size_bytes": recording.file_size_bytes,
                 "size_mb": recording.file_size_mb,
