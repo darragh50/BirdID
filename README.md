@@ -36,9 +36,15 @@ npm start
 - [x] Basic backend with FastAPI
 - [x] Frontend-backend connection test
 - [x] CI/CD pipeline with GitHub Actions
+- [x] Audio recording functionality
 - [x] Database integration (PostgreSQL)
-- [ ] File storage (AWS S3)
+- [x] File storage (AWS S3)
 - [ ] Authentication (Firebase)
+- [ ] Audio Playback
 - [ ] BirdNET integration
-- [ ] Audio recording functionality
 - [ ] Bird identification feature
+- [ ] Bird identification confidence score
+- [ ] Species documentation/data
+- [ ] Extra features & aesthetics
+
+
