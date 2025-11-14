@@ -1,5 +1,13 @@
-from s3config import test_s3_connection, upload_file_to_s3, S3_BUCKET_NAME
+# Interact with the opperating system e.g file paths
 import os
+# Provides access to system specific parameters and functions
+import sys
+# Adds the parent directory of the current file to the python module search path
+# This allows importing modules from the parent directory
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+# Import S3 configuration and utility functions
+from s3config import test_s3_connection, upload_file_to_s3, S3_BUCKET_NAME
 
 # Function to test S3 connection and file upload
 def main():

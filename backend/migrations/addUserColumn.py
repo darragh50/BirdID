@@ -1,8 +1,14 @@
+# Interact with the opperating system e.g file paths
 import os
+# Provides access to system specific parameters and functions
 import sys
+# Adds the parent directory of the current file to the python module search path
+# This allows importing modules from the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+# Import text for raw SQL execution
 from sqlalchemy import text
+# Import database engine
 from databases import engine
 
 # Migration script to add user_id column to recordings table
