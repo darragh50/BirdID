@@ -1,6 +1,9 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 from firebaseconfig import test_firebase_connection, get_user_by_uid
 import firebase_admin
-
 
 # Test firebase connection
 def main():
