@@ -44,3 +44,30 @@ def verify_firebase_token(id_token: str):
         raise ValueError("Firebase token has expired")
     except Exception as e:
         raise ValueError(f"Token verification failed: {str(e)}")
+    
+# Function to get user information by UID
+def get_user_by_uid(uid: str):
+    """
+    Get Firebase user information by UID
+
+    Args:
+        uid (str): The UID of the Firebase user
+
+    Returns:
+        dict: User information (email, display name, etc)
+    """
+    
+    try:
+        # Call firebase Admin SDK method auth.get_user(uid)
+        user = auth.get_user(uid)
+        # If the UID exists return a UserRecord object (dictionary) containing the user’s details
+        return{
+            "uid": user.uid,
+            "email": user.email,
+            "email_verified": user.email_verified,
+            "disabled": user.disabled,
+            "created_at": user.user_metadata.creation_timestamp
+        }
+    # Else raise an error
+    except Exception as e:
+        raise ValueError(f"Failed to get user by UID: {str(e)}")
