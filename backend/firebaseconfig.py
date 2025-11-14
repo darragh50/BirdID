@@ -1,5 +1,5 @@
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, auth
 import os
 
 # Path to Firebase service account key JSON file
@@ -17,3 +17,30 @@ try:
 except Exception as e:
     print("Error initializing Firebase admin:", e)
     raise
+
+# Function to verify Firebase ID tokens
+def verify_firebase_token(id_token: str):
+    """
+    Verify a firebase ID token sent from the client
+
+    Args:
+        id_token (str): The Firebase ID token to verify
+    
+    Returns:
+        dict: Decoded token information if verification is successful (uid, email etc)
+    
+    Raises:
+        ValueError: If the token is invalid/expired or verification fails
+    """
+
+    try:
+        # Verify the token with Firebase Admin SDK
+        decoded_token = auth.verify_id_token(id_token)
+        # Return the decoded token information or raise an error if verification fails
+        return decoded_token
+    except auth.InvalidIdTokenError:
+        raise ValueError("Invalid Firebase token")
+    except auth.ExpiredIdTokenError:
+        raise ValueError("Firebase token has expired")
+    except Exception as e:
+        raise ValueError(f"Token verification failed: {str(e)}")
