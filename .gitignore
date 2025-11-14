@@ -2,6 +2,7 @@
 node_modules/
 venv/
 __pycache__/
+*.db
 
 # Environment variables
 .env
@@ -26,3 +27,6 @@ npm-debug.log*
 
 # File uploads
 uploads/
+
+# Firebase 
+bird-identifier-9f5e5-firebase-adminsdk-fbsvc-147b255c1d.json
