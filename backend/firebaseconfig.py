@@ -71,3 +71,18 @@ def get_user_by_uid(uid: str):
     # Else raise an error
     except Exception as e:
         raise ValueError(f"Failed to get user by UID: {str(e)}")
+    
+# Test firebase connection
+def test_firebase_connection():
+    """
+    Test firebase admin SDK
+    """
+    try:
+        # Attempt to list users to test connection and return True if successful
+        users = auth.list_users().users
+        print("Successfully connected to Firebase")
+        return True
+    # Catch any exceptions and return False
+    except Exception as e:
+        print("Failed to connect to Firebase:", e)
+        return False
