@@ -14,10 +14,13 @@ class Recordings(Base):
     # Primary key
     id = Column(Integer, primary_key=True, index=True)
 
+    # User information (links to Firebase user)
+    user_id = Column(String(128), nullable=True, index=True)
+
     # File information
     filename = Column(String, nullable=False)
     original_filename = Column(String, nullable=True)
-    # Path to the audio file in S3 bucket (later)
+    # Path to the audio file in S3 bucket 
     file_path = Column(String, nullable=False)
 
     # Audio metadata
@@ -36,4 +39,4 @@ class Recordings(Base):
     # String representation for debugging
     # Specifically prints id, filename, and identified species
     def __repr__(self):
-        return f"<Recordings(id={self.id}, filename={self.filename}, bird={self.identified_species})>"
+        return f"<Recordings(id={self.id}, user_id={self.user_id}, filename={self.filename}, bird={self.identified_species})>"
