@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // Core react UI components needed for the screen
-import {View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet} from 'react-native';
 // Import authentication functions from AuthContext
 import { useAuth } from '../contexts/AuthContext';
 
@@ -73,17 +73,19 @@ export default function SignupScreen({ navigation }) {
     // Ensures the UI adjusts when keyboard opens (especially on ios)
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
     >
-      <ScrollView>
-        <View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.formContainer}>
           {/* Screen header text */}
-          <Text>Create Account</Text>
-          <Text>Join Bird Identifier today</Text>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Join Bird Identifier today</Text>
           
           {/* Email input section */}
-          <View>
-            <Text>Email</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
             <TextInput
+              style={styles.input}
               placeholder="your.email@example.com"
               value={email}
               onChangeText={setEmail}
@@ -95,9 +97,10 @@ export default function SignupScreen({ navigation }) {
           </View>
           
           {/* Password input */}
-          <View>
-            <Text>Password</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
             <TextInput
+              style={styles.input}
               placeholder="At least 6 characters"
               value={password}
               onChangeText={setPassword}
@@ -108,9 +111,10 @@ export default function SignupScreen({ navigation }) {
           </View>
 
           {/* Confirm password input */}
-          <View>
-            <Text>Confirm Password</Text>
+          <View style={styles.inputContainer}>
+            <Text  style={styles.label}>Confirm Password</Text>
             <TextInput
+              style={styles.input}
               placeholder="Re-enter your password"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -122,6 +126,7 @@ export default function SignupScreen({ navigation }) {
 
           {/* Signup button */}
           <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleSignup}
             // Disable button while request is processing
             disabled={loading}
@@ -129,18 +134,18 @@ export default function SignupScreen({ navigation }) {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text>Create Account</Text>
+              <Text style={styles.buttonText}>Create Account</Text>
             )}
           </TouchableOpacity>
 
           {/* Link to Login screen */}
-          <View>
-            <Text>Already have an account? </Text>
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Already have an account? </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('Login')}
               disabled={loading}
             >
-              <Text>Sign In</Text>
+              <Text style={styles.loginLink}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -148,3 +153,91 @@ export default function SignupScreen({ navigation }) {
     </KeyboardAvoidingView>
   );
 }
+
+// Styles for the SignupScreen components
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#f5f5f5',
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      padding: 20,
+    },
+    formContainer: {
+      backgroundColor: '#fff',
+      borderRadius: 20,
+      padding: 30,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 5,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 8,
+      color: '#2c3e50',
+    },
+    subtitle: {
+      fontSize: 16,
+      textAlign: 'center',
+      color: '#7f8c8d',
+      marginBottom: 30,
+    },
+    inputContainer: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      marginBottom: 8,
+      color: '#2c3e50',
+    },
+    input: {
+      backgroundColor: '#f8f9fa',
+      borderRadius: 10,
+      padding: 15,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    button: {
+      backgroundColor: '#3498db',
+      borderRadius: 10,
+      padding: 16,
+      alignItems: 'center',
+      marginTop: 10,
+      shadowColor: '#3498db',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    buttonDisabled: {
+      backgroundColor: '#95a5a6',
+      shadowOpacity: 0,
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    loginContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 20,
+    },
+    loginText: {
+      color: '#7f8c8d',
+      fontSize: 14,
+    },
+    loginLink: {
+      color: '#27ae60',
+      fontSize: 14,
+      fontWeight: '600',
+    },
+});
