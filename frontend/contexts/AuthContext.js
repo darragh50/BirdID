@@ -1,6 +1,6 @@
 import React, {createContext, useState, useEffect, useContext} from "react";
 // Import Firebase authentication methods
-import { onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 // Import the auth instance from Firebase config
 import { auth } from "../firebase";
 
@@ -58,5 +58,22 @@ export const AuthProvider = ({ children }) => {
           setError(error.message);
           throw error;
         }
+    };
+
+    // Sign in function. Logs an existing user in with email and password
+    const signIn = async (email, password) => {
+        setError(null);
+        try {
+          // Attempt to authenticate the user with firebase
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          // Debugging
+          console.log('User signed in:', userCredential.user.email);
+          // Return the authenticated user object
+          return userCredential.user;
+        }catch (error) {
+          console.error('Login error:', error.message);
+          setError(error.message);
+          throw error;
+       }
     };
 };
