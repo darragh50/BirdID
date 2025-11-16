@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
     }, []);
 
-    // Functions.....
     // Sign up function. Creates a new user with email and password
     const signUp = async (email, password) => {
         setError(null);
@@ -91,4 +90,23 @@ export const AuthProvider = ({ children }) => {
         throw error;
      }
    };
+
+   // Object containing context values and functions accessible throughout the app
+   const value = {
+    user, // The currently authenticated user object
+    loading, // Whether auth state is still loading (boolean)
+    error, // Any authentication error messages
+    signUp, // Function to register a new user
+    signIn, // Function to log in an existing user
+    logout, // Function to log out the current user
+    getIdToken, // Function to get the current user's  firebase ID token
+  };
+
+  // Provide the auth context values to all children components
+  // Makes authentication logic globally available
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
