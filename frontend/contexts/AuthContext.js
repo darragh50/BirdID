@@ -1,6 +1,6 @@
 import React, {createContext, useState, useEffect, useContext} from "react";
 // Import Firebase authentication methods
-import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 // Import the auth instance from Firebase config
 import { auth } from "../firebase";
 
@@ -76,4 +76,19 @@ export const AuthProvider = ({ children }) => {
           throw error;
        }
     };
+
+    // Sign out function
+    const logout = async () => {
+      setError(null);
+      try {
+        // Attempt to sign the user out
+        await signOut(auth);
+        console.log('User signed out');
+        // Catch any errors that occur during sign out
+      } catch (error) {
+        console.error('Logout error:', error.message);
+        setError(error.message);
+        throw error;
+     }
+   };
 };
