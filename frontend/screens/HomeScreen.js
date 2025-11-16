@@ -3,11 +3,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { useState, useRef } from 'react';
 import { Audio } from 'expo-av';
+import { useAuth } from '../contexts/AuthContext';
 
 
 export default function HomeScreen() {
-  // useState hook to store the backend message received from FastAPI
-  const [apiMessage, setApiMessage] = useState('');
+  // Auth hook
+  const {user, logout, getIdToken} = useAuth();
   // State management
   // Holding the recording object
   const [recording, setRecording] = useState(null);
@@ -153,6 +154,13 @@ export default function HomeScreen() {
     try {
       console.log('Uploading audio to backend...');
 
+      // Get the ID token for authenticated requests
+      const token = await getIdToken();
+      if(!token) {
+        Alert.alert('Error', 'User not authenticated. Please log in again');
+        return;
+      }
+
       // Create form data to hold the audio file and metadata
       const formData = new FormData();
       
@@ -185,6 +193,7 @@ export default function HomeScreen() {
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`, // Include the ID token in the Authorization header
         },
       });
       // Check if the response is not ok (status code outside 200-299 range)
@@ -235,6 +244,26 @@ export default function HomeScreen() {
   // Render the main application UI
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* User info and logout button */}
+      <View style={styles.userInfoContainer}>
+        <View>
+          <Text style={styles.userEmail}>User {user?.email}</Text>
+          <Text style={styles.userStatus}>Logged in</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={async () => {
+            try {
+              await logout();
+              Alert.alert('Success', 'Logged out successfully');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to log out');
+            }
+          }}
+        >
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.title}>Bird Identifier</Text>
       <Text style={styles.subtitle}>Record a bird song to identify it</Text>
 
@@ -347,6 +376,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#7f8c8d',
     marginBottom: 40,
+  },
+  userInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  userEmail: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2c3e50',
+  },
+  userStatus: {
+    fontSize: 12,
+    color: '#27ae60',
+    marginTop: 2,
+  },
+  logoutButton: {
+    backgroundColor: '#e74c3c',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   recordingSection: {
     width: '100%',
