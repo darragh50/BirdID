@@ -1,6 +1,6 @@
 import React, {createContext, useState, useEffect, useContext} from "react";
 // Import Firebase authentication methods
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
 // Import the auth instance from Firebase config
 import { auth } from "../firebase";
 
@@ -41,4 +41,22 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Functions.....
+    // Sign up function. Creates a new user with email and password
+    const signUp = async (email, password) => {
+        setError(null);
+        try {
+          // Attempt to create a user with firebase authentication
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          // Log the email of the newly created user for debugging
+          console.log('User created:', userCredential.user.email);
+          // Return the newly created user object (contains userID, email etc)
+          return userCredential.user;
+        } catch (error) {
+          // Log any errors that occur during signup
+          console.error('Signup error:', error.message);
+          // Set the error state to display in the UI if needed
+          setError(error.message);
+          throw error;
+        }
+    };
 };
