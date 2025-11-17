@@ -20,6 +20,8 @@ from sqlalchemy.orm import Session
 from models import Recordings, Base
 # Import s3config functions
 from s3config import upload_file_to_s3, delete_file_from_S3, test_s3_connection
+# Import authentication dependency
+from authmiddleware import get_current_user
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
@@ -129,7 +131,8 @@ def s3_health_check():
 async def upload_audio(
     audio: UploadFile = File(...), # Ellipsis ensures this field is required
     duration: str = Form(None),
-    db: Session = Depends(get_db) # Get database session via dependency injection
+    db: Session = Depends(get_db), # Get database session via dependency injection
+    user = Depends(get_current_user)
 ):
     """
     Endpoint to receive audio recordings from the frontend
@@ -147,6 +150,8 @@ async def upload_audio(
     temp_file_path = None
 
     try:
+        # Log who is uploading the file
+        print(f"Upload from user: {user['email']} (UID: {user['uid']})") 
         # Generate unique filename with timestamp
         # strftime() formats datetime object in the desired string format
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -191,7 +196,8 @@ async def upload_audio(
             file_path = s3_url,
             duration = duration_float,
             file_size_bytes = file_size,
-            file_size_mb = file_size_mb
+            file_size_mb = file_size_mb,
+            user_id=user['uid']
         )
 
         # Add and commit the new record to the database
@@ -392,7 +398,7 @@ def delete_recording(recording_id: int, db: Session = Depends(get_db)):
         filename = recording.filename
 
         # Delete the file from S3
-        s3_deleted = delete_file_from_s3(filename)
+        s3_deleted = delete_file_from_S3(filename)
 
         # Then delete the database record
         db.delete(recording)
