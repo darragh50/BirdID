@@ -249,14 +249,16 @@ async def upload_audio(
     
 # Endpoint to retrieve all stored recordings from the database
 @app.get("/recordings")
-def get_recordings(db: Session = Depends(get_db)):
+def get_recordings(db: Session = Depends(get_db), user = Depends(get_current_user)):
     """
     Retrieve all recordings from the database
     Returns a list of recordings with their metadata
     """
     try:
         # Query all recordings and order them by newest first using upload_time
-        recordings = db.query(Recordings).order_by(Recordings.upload_time.desc()).all()
+        recordings = db.query(Recordings).filter(
+            Recordings.user_id == user['uid']
+        ).order_by(Recordings.upload_time.desc()).all()
         
         # Prepare a list to hold formatted recording data
         recordings_list = []
