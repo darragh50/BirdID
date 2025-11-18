@@ -39,7 +39,7 @@ npm start
 - [x] Audio recording functionality
 - [x] Database integration (PostgreSQL)
 - [x] File storage (AWS S3)
-- [ ] Authentication (Firebase)
+- [x] Authentication (Firebase)
 - [ ] Audio Playback
 - [ ] BirdNET integration
 - [ ] Bird identification feature
