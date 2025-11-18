@@ -91,6 +91,20 @@ export const AuthProvider = ({ children }) => {
      }
    };
 
+  // Get current user's ID token (for backend authentication)
+  const getIdToken = async () => {
+    if (user) {
+      try {
+        const token = await user.getIdToken();
+        return token;
+      } catch (error) {
+        console.error('Error getting token:', error.message);
+        throw error;
+      }
+    }
+    return null;
+  };
+
    // Object containing context values and functions accessible throughout the app
    const value = {
     user, // The currently authenticated user object
