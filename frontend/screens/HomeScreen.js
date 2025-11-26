@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Alert, ScrollView, TouchableOpacity } from 'rea
 import { useState, useRef } from 'react';
 import { Audio } from 'expo-av';
 import { useAuth } from '../contexts/AuthContext';
-
+import { useEffect } from 'react';
 
 export default function HomeScreen() {
   // Auth hook
@@ -24,6 +24,9 @@ export default function HomeScreen() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   // Timer for recording duration
   const durationInterval = useRef(null); 
+  // States for list of recordings
+  const [recordings, setRecordings] = useState([]);
+  const [loadingRecordings, setLoadingRecordings] = useState(false);
 
   // Request microphone permissions
   const getPermissions = async () => {
@@ -207,6 +210,10 @@ export default function HomeScreen() {
 
       // Update state to reflect successful upload
       setUploadSuccess(true);
+
+      // Refresh recordings list
+      fetchRecordings(); 
+
       // Then show success alert to user with backend response data
       Alert.alert(
         'Upload Successful',
@@ -229,6 +236,54 @@ export default function HomeScreen() {
       setIsUploading(false);
     }
   };
+
+  // Function to fetch recordings
+  const fetchRecordings = async () => {
+    // Show loading indicator
+    setLoadingRecordings(true);
+    try {
+      // Get the Firebase ID token for the currently logged in user
+      const token = await getIdToken();
+      // If no token exists, the user is not authenticated
+      if (!token) {
+        console.log('No token available');
+        return;
+      }
+  
+      const BACKEND_URL = 'http://192.168.1.34:8000'; // My ip for now
+      
+      // Make GET request to /recordings endpoint     
+      const response = await fetch(`${BACKEND_URL}/recordings`, {
+        method: 'GET',
+        headers: {
+          // Add Firebase token to Authorization header
+          // Backend will verify this token to confirm the user
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recordings: ${response.status}`);
+      }
+      
+      // Parse the JSON response
+      const data = await response.json();
+      console.log('Fetched recordings:', data.count);
+      // Update state with returned recordings array
+      setRecordings(data.recordings || []);
+      
+    } catch (error) {
+      console.error('Error fetching recordings:', error);
+      Alert.alert('Error', 'Could not load your recordings');
+    } finally {
+      setLoadingRecordings(false);
+    }
+  };
+
+  // Load recordings when screen first mounts. Only runs once
+  useEffect(() => {
+    fetchRecordings();
+  }, []);
 
   // Make UI look nicer, 65 goes to 1:05 
   const formatDuration = (seconds) => {
