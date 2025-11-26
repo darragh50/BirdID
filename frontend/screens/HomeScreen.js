@@ -27,6 +27,8 @@ export default function HomeScreen() {
   // States for list of recordings
   const [recordings, setRecordings] = useState([]);
   const [loadingRecordings, setLoadingRecordings] = useState(false);
+  const [playingRecording, setPlayingRecording] = useState(null);
+  const [sound, setSound] = useState(null);
 
   // Request microphone permissions
   const getPermissions = async () => {
@@ -284,6 +286,113 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchRecordings();
   }, []);
+
+  // Function to play a recording when the user taps on it
+  const playRecording = async (recordingItem) => {
+    try {
+      // Stop any currently playing sound to ensure only one plays at a time
+      if (sound) {
+        // Fully remove existing audio from memory
+        await sound.unloadAsync();
+        // Then clear sound state
+        setSound(null);
+      }
+      
+      console.log('Playing recording from:', recordingItem.s3_url);
+      
+      // Load and play the audio from S3 URL
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        // Remote audio URL
+        { uri: recordingItem.s3_url },
+        // Auto play when loaded
+        { shouldPlay: true }
+      );
+      
+      // Store the new sound instance in state so it can be stopped later
+      setSound(newSound);
+      // Highlight the currently playing recording in the UI 
+      setPlayingRecording(recordingItem.id);
+  
+      // Set up listener for when sound finishes playing
+      newSound.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) {
+          setPlayingRecording(null);
+        }
+      });
+  
+    // Catch any errors during playback
+    } catch (error) {
+      console.error('Error playing recording:', error);
+      Alert.alert('Playback Error', 'Could not play this recording');
+      setPlayingRecording(null);
+    }
+  };
+  
+  // Function to stop audio playback manually. For a stop button
+  const stopPlayback = async () => {
+    if (sound) {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+      setSound(null);
+      setPlayingRecording(null);
+    }
+  };
+  
+  // Function to delete a recording
+  const deleteRecording = async (recordingId) => {
+    // Confirmation popup before deletion
+    Alert.alert(
+      'Delete Recording',
+      'Are you sure you want to delete this recording?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            // If confirmed, proceed to delete
+            try {
+              // We need the Firebase ID token for authorization
+              const token = await getIdToken();
+              const BACKEND_URL = 'http://localhost:8000';
+              
+              // Make DELETE request to backend
+              const response = await fetch(`${BACKEND_URL}/recordings/${recordingId}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                },
+              });
+              
+              // If response not ok, throw error
+              if (!response.ok) {
+                throw new Error('Failed to delete recording');
+              }
+              
+              // If successful, notify user and refresh recordings list
+              Alert.alert('Success', 'Recording deleted');
+              fetchRecordings(); 
+              
+            // Catch any errors during deletion
+            } catch (error) {
+              console.error('Error deleting:', error);
+              Alert.alert('Error', 'Could not delete recording');
+            }
+          },
+        },
+      ]
+    );
+  };
+  
+  // Cleanup sound when component unmounts
+  // Ensure audio doesn't keep playing in background
+  useEffect(() => {
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, [sound]);
 
   // Make UI look nicer, 65 goes to 1:05 
   const formatDuration = (seconds) => {
