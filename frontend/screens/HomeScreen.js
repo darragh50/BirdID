@@ -514,6 +514,86 @@ export default function HomeScreen() {
           )}
         </View>
       </View>
+
+        {/*Recording list*/}
+        <View style={styles.recordingsSection}>
+          <View style={styles.recordingsHeader}>
+          <Text style={styles.recordingsTitle}>
+            My Recordings ({recordings.length})
+            </Text>
+            <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={fetchRecordings}
+              disabled={loadingRecordings}
+            >
+              <Text style={styles.refreshButtonText}>
+                {loadingRecordings ? '⏳' : '🔄'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {loadingRecordings ? (
+            <View style={styles.loadingContainer}>
+              <Text>Loading recordings..</Text>
+            </View>
+          ) : recordings.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No recordings yet</Text>
+              <Text style={styles.emptySubtext}>
+                Record your first bird song above
+              </Text>
+            </View>
+          ) : (
+            recordings.map((item) => (
+              <View key={item.id} style={styles.recordingItem}>
+                <View style={styles.recordingInfo}>
+                  <Text style={styles.recordingFilename}>
+                    Recording #{item.id}
+                  </Text>
+                  <Text style={styles.recordingDate}>
+                    {new Date(item.created_at).toLocaleString()}
+                  </Text>
+                  <Text style={styles.recordingDuration}>
+                    Duration: {item.duration_seconds}s • Size: {item.size_mb} MB
+                  </Text>
+                  {item.identified_bird && (
+                    <Text style={styles.birdName}>
+                      Bird {item.identified_bird} ({Math.round(item.confidence * 100)}%)
+                    </Text>
+                  )}
+                </View>
+                
+                <View style={styles.recordingActions}>
+                  <TouchableOpacity
+                    style={[
+                      styles.playButton,
+                      playingRecording === item.id && styles.playButtonActive
+                    ]}
+                    onPress={() => {
+                      if (playingRecording === item.id) {
+                        stopPlayback();
+                      } else {
+                        playRecording(item);
+                      }
+                    }}
+                  >
+                    <Text style={styles.playButtonText}>
+                      {playingRecording === item.id ? '⏸️' : '▶️'}
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => deleteRecording(item.id)}
+                  >
+                    <Text style={styles.deleteButtonText}>🗑️</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
+      </View>
+
       <StatusBar style="auto" />
     </ScrollView>
   );
