@@ -599,7 +599,6 @@ export default function HomeScreen() {
   );
 }
 
-
 // Styling
 const styles = StyleSheet.create({
   container: {
@@ -785,6 +784,119 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#7f8c8d',
     fontFamily: 'monospace',
+  },
+  recordingsSection: {
+    width: '100%',
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  recordingsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  recordingsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  refreshButton: {
+    padding: 8,
+  },
+  refreshButtonText: {
+    fontSize: 20,
+  },
+  loadingContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    padding: 40,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#e9ecef',
+    borderStyle: 'dashed',
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#7f8c8d',
+    marginBottom: 4,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#95a5a6',
+  },
+  recordingItem: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  recordingInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  recordingFilename: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginBottom: 4,
+  },
+  recordingDate: {
+    fontSize: 12,
+    color: '#7f8c8d',
+    marginBottom: 2,
+  },
+  recordingDuration: {
+    fontSize: 12,
+    color: '#95a5a6',
+  },
+  birdName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#27ae60',
+    marginTop: 4,
+  },
+  recordingActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  playButton: {
+    backgroundColor: '#3498db',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playButtonActive: {
+    backgroundColor: '#e67e22',
+  },
+  playButtonText: {
+    fontSize: 20,
+  },
+  deleteButton: {
+    backgroundColor: '#e74c3c',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    fontSize: 20,
   },
 });
 
