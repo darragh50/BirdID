@@ -22,6 +22,8 @@ from models import Recordings, Base
 from s3config import upload_file_to_s3, delete_file_from_S3, test_s3_connection
 # Import authentication dependency
 from authmiddleware import get_current_user
+# Import function to generate presigned URLs
+from s3config import generate_presigned_url 
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
@@ -265,11 +267,14 @@ def get_recordings(db: Session = Depends(get_db), user = Depends(get_current_use
         
         # Loop through each database record and format the data for JSON response
         for recording in recordings:
+            # Generate presigned URL for playback (valid for 1 hour)
+            playback_url = generate_presigned_url(recording.filename, expiration=3600)
+
             recordings_list.append({
                 "id": recording.id,
                 "filename": recording.filename,
                 "original_filename": recording.original_filename,
-                "s3_url": recording.file_path,
+                "s3_url": playback_url,
                 "duration": recording.duration,
                 "size_mb": recording.file_size_mb,
                 "identified_species": recording.identified_species,
@@ -308,6 +313,9 @@ def get_recording_by_id(recording_id: int, db: Session = Depends(get_db)):
                 "message": f"Recording with ID {recording_id} not found."
             }
         
+        # Generate presigned URL
+        playback_url = generate_presigned_url(recording.filename, expiration=3600)
+
         # If the recording exists, return all its details as JSON
         return {
             "success": True,
@@ -315,7 +323,7 @@ def get_recording_by_id(recording_id: int, db: Session = Depends(get_db)):
                 "id": recording.id,
                 "filename": recording.filename,
                 "original_filename": recording.original_filename,
-                "s3_url": recording.file_path,
+                "s3_url": playback_url,
                 "duration": recording.duration,
                 "size_bytes": recording.file_size_bytes,
                 "size_mb": recording.file_size_mb,
