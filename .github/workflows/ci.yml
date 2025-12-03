@@ -48,6 +48,11 @@ jobs:
       run: |
         echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> $GITHUB_ENV
 
+    - name: Create Firebase credentials file
+      working-directory: ./backend
+      run: |
+        echo "${{ secrets.FIREBASE_CREDENTIALS_JSON }}" > bird-identifier-9f5e5-firebase-adminsdk-fbsvc-147b255c1d.json
+
     - name: Run pytest
       working-directory: ./backend
       run: |
