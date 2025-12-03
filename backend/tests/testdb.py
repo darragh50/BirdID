@@ -16,7 +16,7 @@ from sqlalchemy import text
 
 # Function to test database connection and basic operations
 @pytest.mark.integration
-def test():
+def test_():
     """
     Quick test to verify database connection and basic operations
     """
@@ -73,4 +73,4 @@ def test():
 
 # Run the test when this script is executed directly
 if __name__ == "__main__":
-    test()
+    test_()

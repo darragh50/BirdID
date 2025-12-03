@@ -35,12 +35,12 @@ def test_recording_model_creation(test_db):
     test_db.refresh(recording)
     
     # Verify fields are correctly set
-    assert Recordings.id is not None
-    assert Recordings.user_id == "test_user_123"
-    assert Recordings.filename == "test_recording.m4a"
-    assert Recordings.duration == 10.5
-    assert Recordings.upload_time is not None
-    assert isinstance(Recordings.upload_time, datetime)
+    assert recording.id is not None
+    assert recording.user_id == "test_user_123"
+    assert recording.filename == "test_recording.m4a"
+    assert recording.duration == 10.5
+    assert recording.upload_time is not None
+    assert isinstance(recording.upload_time, datetime)
 
 
 @pytest.mark.unit

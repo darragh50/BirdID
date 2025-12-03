@@ -298,7 +298,7 @@ def get_recordings(db: Session = Depends(get_db), user = Depends(get_current_use
     
 # Endpoint to get a specific recording by its ID
 @app.get("/recordings/{recording_id}")
-def get_recording_by_id(recording_id: int, db: Session = Depends(get_db)):
+def get_recording_by_id(recording_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     """
     Get a specific recording by its ID
     """
@@ -389,7 +389,7 @@ def list_recordings():
 
 # Endpoint to delete a specific recording by id
 @app.delete("/recordings/{recording_id}")
-def delete_recording(recording_id: int, db: Session = Depends(get_db)):
+def delete_recording(recording_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     """
     Delete a specific recording from the database and S3
     """
