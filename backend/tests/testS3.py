@@ -2,6 +2,7 @@
 import os
 # Provides access to system specific parameters and functions
 import sys
+import pytest
 # Adds the parent directory of the current file to the python module search path
 # This allows importing modules from the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -10,6 +11,8 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from s3config import test_s3_connection, upload_file_to_s3, S3_BUCKET_NAME
 
 # Function to test S3 connection and file upload
+@pytest.mark.integration  
+@pytest.mark.slow
 def main():
     """
     Test S3 connection and file upload functionality

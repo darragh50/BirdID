@@ -2,6 +2,7 @@
 import os
 # Provides access to system specific parameters and functions
 import sys
+import pytest
 # Adds the parent directory of the current file to the python module search path
 # This allows importing modules from the parent directory
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -14,6 +15,7 @@ from models import Recordings
 from sqlalchemy import text
 
 # Function to test database connection and basic operations
+@pytest.mark.integration
 def test():
     """
     Quick test to verify database connection and basic operations
