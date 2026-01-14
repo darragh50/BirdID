@@ -40,7 +40,7 @@ npm start
 - [x] Database integration (PostgreSQL)
 - [x] File storage (AWS S3)
 - [x] Authentication (Firebase)
-- [ ] Audio Playback
+- [x] Audio Playback
 - [ ] BirdNET integration
 - [ ] Bird identification feature
 - [ ] Bird identification confidence score
