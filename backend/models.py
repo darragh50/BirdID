@@ -36,6 +36,10 @@ class Recordings(Base):
     upload_time = Column(DateTime(timezone=True), server_default=func.now()) 
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    # Location data (optional)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+
     # String representation for debugging
     # Specifically prints id, filename, and identified species
     def __repr__(self):

@@ -68,6 +68,8 @@ def test_recording_model_defaults(test_db):
     assert recording.user_id is None
     assert recording.identified_species is None
     assert recording.confidence_score is None
+    assert recording.latitude is None
+    assert recording.longitude is None
 
 @pytest.mark.unit
 def test_recording_model_repr(test_db):

@@ -329,6 +329,8 @@ def get_recording_by_id(recording_id: int, db: Session = Depends(get_db), user=D
                 "size_mb": recording.file_size_mb,
                 "identified_species": recording.identified_species,
                 "confidence_score": recording.confidence_score,
+                "latitude": recording.latitude,
+                "longitude": recording.longitude,
                 "upload_time": recording.upload_time.isoformat() if recording.upload_time else None,
                 "updated_at": recording.updated_at.isoformat() if recording.updated_at else None
             }
