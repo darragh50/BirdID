@@ -82,3 +82,20 @@ def identify_bird_from_file(audio_file_path, latitude=None, longitude=None, min_
     except Exception as e:
         print(f"Error analyzing audio with BirdNET: {e}")
         return []
+    
+# Function to get best match
+def get_best_match(detections):
+    """
+    Get the best (highest confidence) match from detections
+    
+    Args:
+        detections (list): List of detections from identify_bird_from_file
+    
+    Returns:
+        dict or None: Best match or none if no detections
+    """
+    if not detections or len(detections) == 0:
+        return None
+    
+    # Return first item (already sorted by the confidence)
+    return detections[0]
