@@ -99,3 +99,24 @@ def get_best_match(detections):
     
     # Return first item (already sorted by the confidence)
     return detections[0]
+
+# Function to format bird detection result
+def format_bird_result(detection):
+    """
+    Format the result 
+    
+    Args:
+        detection (dict): Single detection from BirdNET
+    
+    Returns:
+        str: Formatted string like ie: European robin (87.3%)"
+    """
+    if not detection:
+        return "No bird detected"
+    
+    # Extract name and confidence
+    name = detection.get('common_name', 'Unknown')
+    confidence = detection.get('confidence', 0.0) * 100  # Convert to a percentage
+    
+    # Return formatted string
+    return f"{name} ({confidence:.1f}%)"
