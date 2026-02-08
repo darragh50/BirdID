@@ -45,3 +45,53 @@ def test_format_bird_result_none():
     """Test formatting with no detection."""
     formatted = format_bird_result(None)
     assert formatted == "No bird detected"
+
+# This test will attempt to run the BirdNET analysis on a sample file if it exists in the uploads directory
+if __name__ == "__main__":
+    print("Testing BirdNET Integration")
+    
+    # Test configuration
+    print("\n1.Testing BirdNET configuration")
+    test_birdnet()
+    
+    # Test with sample file from my uploads folder
+    print("\n2.Testing with sample audio")
+    print("Checking for sample files in uploads")
+    
+    from pathlib import Path
+    uploads_dir = Path("uploads")
+    
+    if uploads_dir.exists():
+        # Find all .m4a audio files in the uploads directory
+        audio_files = list(uploads_dir.glob("*.m4a"))
+        if audio_files:
+            # Use the first available audio file as a sample
+            sample_file = audio_files[0]
+            print(f"Found: {sample_file}")
+            
+            # Run BirdNET analysis on the sample audio file
+            results = identify_bird_from_file(str(sample_file))
+            
+            if results:
+                print(f"\nAnalysis successful!")
+                print(f"Detected {len(results)} bird(s):\n")
+                
+                # Display details for up to the top 5 detections
+                for i, bird in enumerate(results[:5], 1):  
+                    print(f"{i}. {format_bird_result(bird)}")
+                    print(f"Scientific: {bird['scientific_name']}")
+                    print(f"Time: {bird['start_time']:.1f}s - {bird['end_time']:.1f}s\n")
+                
+                # Determine and display the best overall match
+                best = get_best_match(results)
+                if best:
+                    print(f"Best match: {format_bird_result(best)}")
+            else:
+                # Analysis ran but no birds were detected
+                print("No birds detected (might be background noise)")
+        else:
+            # uploads directory exists but contains no .m4a files
+            print("No audio files found in uploads")
+    else:
+        # uploads directory does not exist
+        print("Uploads directory not found")
