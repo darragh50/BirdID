@@ -98,3 +98,27 @@ def is_audio_file(file_path):
     supported_formats = ['.m4a', '.mp3', '.wav', '.flac', '.ogg', '.aac']
     # Check if file extension is in supported formats (case insensitive)
     return Path(file_path).suffix.lower() in supported_formats
+
+# Function safely deletes temporary files after processing to free up storage and maintain a clean environment
+def cleanup_temp_file(file_path):
+    """
+    Delete a temporary file safely.
+    
+    Args:
+        file_path (str): Path to file to delete
+    
+    Returns:
+        bool: True if deleted successfully
+    """
+    try:
+        # Ensure file path is a Path object
+        file_path = Path(file_path)
+        # Check if file exists before trying to delete
+        if file_path.exists():
+            file_path.unlink()
+            print(f"Cleaned up: {file_path.name}")
+            return True
+        return False
+    except Exception as e:
+        print(f"Failed to cleanup {file_path}: {e}")
+        return False
