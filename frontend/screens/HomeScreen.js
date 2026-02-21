@@ -216,16 +216,34 @@ export default function HomeScreen() {
       // Refresh recordings list
       fetchRecordings(); 
 
+      // Display bird identification result
+      const birdInfo = result.bird_identification;
+
       // Then show success alert to user with backend response data
-      Alert.alert(
-        'Upload Successful',
-        `File saved to cloud storage:\n` + 
-        `Filename: ${result.filename}\n` +
-        `Size: ${result.size_mb}\n` +
-        `Storage: ${result.storage}\n` +
-        `Database ID: ${result.database_id}`, 
-        [{ text: 'Great' }]
-      );
+      if(birdInfo && birdInfo.detected) {
+        // Bird detected
+        Alert.alert(
+          'Upload Successful',
+          `File saved to cloud storage:\n` + 
+          `Filename: ${result.filename}\n` +
+          `Size: ${result.size_mb}\n` +
+          `Storage: ${result.storage}\n` +
+          `Database ID: ${result.database_id}`, 
+          [{ text: 'Great' }]
+        );
+      } else {
+        // No bird detected
+        Alert.alert(
+          'Upload Successful',
+          `Audio uploaded but no bird detected.\n\n` +
+          `This might be background noise or a species not in the database.\n\n` +
+          `File: ${result.filename}\n` +
+          `Size: ${result.size_mb} MB\n` +
+          `Database ID: ${result.database_id}`,
+          [{ text: 'OK' }]
+        );
+      }
+
     // Catch any errors that occur during the upload process
     } catch (error) {
       console.error('Upload failed:', error);
