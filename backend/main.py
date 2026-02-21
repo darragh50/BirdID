@@ -24,6 +24,8 @@ from s3config import upload_file_to_s3, delete_file_from_S3, test_s3_connection
 from authmiddleware import get_current_user
 # Import function to generate presigned URLs
 from s3config import generate_presigned_url 
+# Import bird identification functions 
+from birdnetconfig import identify_bird_from_file, get_best_match
 
 # Create a FastAPI instance
 app = FastAPI(title="Bird Identifier API")
@@ -133,6 +135,8 @@ def s3_health_check():
 async def upload_audio(
     audio: UploadFile = File(...), # Ellipsis ensures this field is required
     duration: str = Form(None),
+    latitude: str = Form(None),  
+    longitude: str = Form(None),
     db: Session = Depends(get_db), # Get database session via dependency injection
     user = Depends(get_current_user)
 ):
@@ -144,6 +148,8 @@ async def upload_audio(
     - audio: The audio file (Default Expo m4a format)
     - duration: Recording duration in seconds (optional)
     - db: Database session
+    - latitude: GPS latitude improves BirdNET accuracy
+    - longitude: GPS longitude improves BirdNET accuracy
     
     Returns:
     - Success message with file details, database record ID, and S3 URL
@@ -179,6 +185,37 @@ async def upload_audio(
         # Convert bytes to megabytes, and round to 2 decimal places
         file_size_mb = round(file_size / (1024 * 1024), 2)
 
+        # Birdnet analysis. This will return a list of detected birds with confidence scores
+        print(f"Running BirdNET analysis")
+        
+        # Convert latitude/longitude to float if it is provided
+        lat_float = float(latitude) if latitude else None
+        lon_float = float(longitude) if longitude else None
+        
+        # Analyze with BirdNET
+        bird_detections = identify_bird_from_file(
+            str(temp_file_path),
+            latitude=lat_float,
+            longitude=lon_float,
+            min_confidence=0.15  # 15% minimum confidence. So if the model is at least 15% sure, it will be included in the results. This helps filter out very uncertain detections.
+        )
+        
+        # Get best match
+        best_bird = get_best_match(bird_detections)
+        
+        # Extract bird info
+        identified_bird = None
+        confidence_score = None
+        
+        # If we have a best match, extract the common name and confidence score to log it. 
+        # Otherwise, log that no bird was detected (could be background noise or an unknown species)
+        if best_bird:
+            identified_bird = best_bird['common_name']
+            confidence_score = best_bird['confidence']
+            print(f"Identified: {identified_bird} ({confidence_score*100:.1f}% confidence)")
+        else:
+            print(f"No bird detected (might be background noise)")
+
         # Upload the file to S3
         s3_url = upload_file_to_s3(str(temp_file_path), unique_filename)
 
@@ -199,7 +236,11 @@ async def upload_audio(
             duration = duration_float,
             file_size_bytes = file_size,
             file_size_mb = file_size_mb,
-            user_id=user['uid']
+            user_id=user['uid'],
+            identified_bird_name=identified_bird,      
+            confidence_score=confidence_score,         
+            latitude=lat_float,                         
+            longitude=lon_float
         )
 
         # Add and commit the new record to the database
@@ -214,13 +255,16 @@ async def upload_audio(
         print(f"S3 URL: {s3_url}")
         print(f"Size: {file_size_mb} MB")
         print(f"Duration: {duration} seconds")
+        print(f"Bird: {identified_bird or 'Not detected'}")
+        print(f"Confidence: {confidence_score*100:.1f}%" if confidence_score else " Confidence: N/A")
 
         # Clean up temp file
         if temp_file_path and temp_file_path.exists():
             temp_file_path.unlink()
         
         # Return success response with file and database details
-        return {
+        # Includes bird identification results and confidence score for the frontend to display
+        response_data = {
             "success": True,
             "message": "Audio file uploaded and successfully saved to S3",
             "database_id": db_recording.id,
@@ -232,8 +276,17 @@ async def upload_audio(
             "size_mb": file_size_mb,
             "duration_seconds": duration_float,
             "timestamp": timestamp,
-            "upload_time": db_recording.upload_time.isoformat() if db_recording.upload_time else None # ISO format and handle case of no timestamp set
+            "upload_time": db_recording.upload_time.isoformat() if db_recording.upload_time else None, # ISO format and handle case of no timestamp set
+            "bird_identification": {
+                "detected": identified_bird is not None,
+                "common_name": identified_bird,
+                "confidence": confidence_score,
+                "confidence_percent": round(confidence_score * 100, 1) if confidence_score else None,
+                "all_detections": bird_detections[:5]  # Set to top 5 detections
+            }
         }
+    
+        return response_data
     
     # Handle exceptions during file upload
     except Exception as e:
