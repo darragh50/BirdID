@@ -6,6 +6,7 @@ from pydub import AudioSegment
 from pathlib import Path
 import os
 
+# Function converts various audio formats to WAV, which is compatible with BirdNET
 def convert_to_wav(input_path, output_path=None):
     """
     Convert audio file to WAV format for BirdNET compatibility
@@ -60,3 +61,40 @@ def convert_to_wav(input_path, output_path=None):
     except Exception as e:
         print(f"Audio conversion failed: {e}")
         return None
+
+# Function gets the duration of an audio file in seconds, which can be useful for processing and validating recordings
+def get_audio_duration(file_path):
+    """
+    Get duration of audio file in seconds.
+    
+    Args:
+        file_path (str): Path to audio file
+    
+    Returns:
+        float: Duration in seconds, or None if failed
+    """
+    try:
+        # Load audio file (pydub supports many formats)
+        audio = AudioSegment.from_file(str(file_path))
+        # Convert milliseconds to seconds
+        duration = len(audio) / 1000.0  
+        return duration
+    except Exception as e:
+        print(f"Could not get audio duration: {e}")
+        return None
+
+# Function checks if a file is a supported audio format based on its extension, which helps ensure that only compatible files are processed
+def is_audio_file(file_path):
+    """
+    Check if file is a supported audio format
+    
+    Args:
+        file_path (str): Path to file
+    
+    Returns:
+        bool: True if supported audio format
+    """
+    # List of supported audio formats (pydub can handle many, but these are common ones for bird recordings)
+    supported_formats = ['.m4a', '.mp3', '.wav', '.flac', '.ogg', '.aac']
+    # Check if file extension is in supported formats (case insensitive)
+    return Path(file_path).suffix.lower() in supported_formats
