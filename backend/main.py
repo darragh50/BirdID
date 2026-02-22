@@ -237,7 +237,7 @@ async def upload_audio(
             file_size_bytes = file_size,
             file_size_mb = file_size_mb,
             user_id=user['uid'],
-            identified_bird_name=identified_bird,      
+            identified_species=identified_bird,      
             confidence_score=confidence_score,         
             latitude=lat_float,                         
             longitude=lon_float

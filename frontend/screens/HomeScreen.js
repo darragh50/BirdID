@@ -187,7 +187,7 @@ export default function HomeScreen() {
       formData.append('duration', recordingDuration.toString());
 
       // Define the backend URL, my IP for now
-      const BACKEND_URL = 'http://192.168.1.22:8000'; 
+      const BACKEND_URL = 'http://192.168.1.16:8000'; 
       
       console.log('Sending to:', `${BACKEND_URL}/upload-audio`);
 
@@ -270,7 +270,7 @@ export default function HomeScreen() {
         return;
       }
   
-      const BACKEND_URL = 'http://192.168.1.22:8000'; // My ip for now
+      const BACKEND_URL = 'http://192.168.1.16:8000'; // My ip for now
       
       // Make GET request to /recordings endpoint     
       const response = await fetch(`${BACKEND_URL}/recordings`, {
@@ -372,7 +372,7 @@ export default function HomeScreen() {
             try {
               // We need the Firebase ID token for authorization
               const token = await getIdToken();
-              const BACKEND_URL = 'http://192.168.1.22:8000';
+              const BACKEND_URL = 'http://192.168.1.16:8000';
               
               // Make DELETE request to backend
               const response = await fetch(`${BACKEND_URL}/recordings/${recordingId}`, {

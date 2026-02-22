@@ -64,10 +64,12 @@ if __name__ == "__main__":
     if uploads_dir.exists():
         # Find all .m4a audio files in the uploads directory
         audio_files = list(uploads_dir.glob("*.m4a")) + list(uploads_dir.glob("*.wav"))
+        
         if audio_files:
             # Use the first available audio file as a sample
             sample_file = audio_files[0]
             print(f"Found: {sample_file}")
+            print(f"Format: {sample_file.suffix.upper()}")
             
             # Run BirdNET analysis on the sample audio file
             results = identify_bird_from_file(str(sample_file))
