@@ -6,6 +6,7 @@ from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
 import os
 from pathlib import Path
+from audioutils import convert_to_wav, cleanup_temp_file
 
 # Initialize BirdNET analyzer
 # This loads the pretrained model
@@ -37,6 +38,9 @@ def identify_bird_from_file(audio_file_path, latitude=None, longitude=None, min_
     
     Returns empty list if no birds detected or file not found
     """
+    # Track converted wav file for deletion
+    wav_file_path = None
+
     try:
         # Verify that the file exists
         if not os.path.exists(audio_file_path):
@@ -45,6 +49,25 @@ def identify_bird_from_file(audio_file_path, latitude=None, longitude=None, min_
         
         print(f"Analyzing audio file {audio_file_path}")
         
+        # Check if file is already wav
+        file_path = Path(audio_file_path)
+
+        # If not wav then convert to wav format 
+        if file_path.suffix.lower() != '.wav':
+            # Convert to wav for BirdNET
+            print(f"Converting {file_path.suffix} to WAV for BirdNET compatibility")
+            wav_file_path = convert_to_wav(audio_file_path)
+            
+            if not wav_file_path:
+                print(f"Audio conversion failed")
+                return []
+            
+            # Use converted wav file for analysis
+            analysis_file = wav_file_path
+        else:
+            # Already wav then use directly
+            analysis_file = audio_file_path
+
         # Create the recording object
         recording = Recording(
             analyzer,
@@ -82,6 +105,11 @@ def identify_bird_from_file(audio_file_path, latitude=None, longitude=None, min_
     except Exception as e:
         print(f"Error analyzing audio with BirdNET: {e}")
         return []
+    
+    finally:
+        # Clean up temporary wav file if it was created
+        if wav_file_path and  wav_file_path != audio_file_path:
+            cleanup_temp_file(wav_file_path)
     
 # Function to get best match
 def get_best_match(detections):
