@@ -279,3 +279,80 @@ export default function RecordingScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    header: {
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    backButton: {
+      marginRight: 16,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+    },
+    waveformContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 12,
+      paddingHorizontal: 40,
+    },
+    waveBar: {
+      width: 8,
+      backgroundColor: '#4CAF50',
+      borderRadius: 4,
+    },
+    durationText: {
+      fontSize: 48,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      textAlign: 'center',
+      marginBottom: 16,
+      fontVariant: ['tabular-nums'],
+    },
+    instructionsText: {
+      fontSize: 16,
+      color: '#7f8c8d',
+      textAlign: 'center',
+      marginBottom: 60,
+      paddingHorizontal: 40,
+      lineHeight: 24,
+    },
+    bottomContainer: {
+      alignItems: 'center',
+      paddingBottom: 60,
+    },
+    stopButton: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: '#f8f9fa',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 12,
+      borderWidth: 3,
+      borderColor: '#e74c3c',
+    },
+    stopIcon: {
+      width: 32,
+      height: 32,
+      backgroundColor: '#e74c3c',
+      borderRadius: 4,
+    },
+    stopText: {
+      fontSize: 16,
+      color: '#7f8c8d',
+      fontWeight: '500',
+    },
+  });
