@@ -54,3 +54,76 @@ export default function HomeTabScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    header: {
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      backgroundColor: '#f8f9fa',
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      marginBottom: 4,
+    },
+    headerSubtitle: {
+      fontSize: 16,
+      color: '#7f8c8d',
+    },
+    content: {
+      flex: 1,
+      alignItems: 'center',
+      paddingTop: 60,
+      paddingHorizontal: 20,
+    },
+    micButtonContainer: {
+      marginBottom: 20,
+    },
+    micButton: {
+      width: 200,
+      height: 200,
+      borderRadius: 100,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#4CAF50',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.3,
+      shadowRadius: 16,
+      elevation: 10,
+    },
+    tapText: {
+      fontSize: 18,
+      color: '#2c3e50',
+      fontWeight: '600',
+      marginBottom: 60,
+    },
+    infoSection: {
+      width: '100%',
+    },
+    infoCard: {
+      backgroundColor: '#f8f9fa',
+      borderRadius: 12,
+      padding: 20,
+      marginBottom: 16,
+      alignItems: 'center',
+    },
+    infoTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: '#2c3e50',
+      marginTop: 12,
+      marginBottom: 8,
+    },
+    infoText: {
+      fontSize: 14,
+      color: '#7f8c8d',
+      textAlign: 'center',
+      lineHeight: 20,
+    },
+  });
