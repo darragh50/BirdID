@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, ActivityIndicator, Animated, Alert} from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, Animated, Alert} from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -11,7 +11,7 @@ export default function AnalyzingScreen({ route, navigation }) {
   // State to track progress of upload and analysis
   const [progress, setProgress] = useState(0);
   // Animated value for spinning icon
-  const spinValue = new Animated.Value(0);
+  const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Spinning animation
@@ -65,7 +65,7 @@ export default function AnalyzingScreen({ route, navigation }) {
       formData.append('duration', duration.toString());
       
       // Define the backend URL, my IP for now
-      const BACKEND_URL = 'http://192.168.1.16:8000';
+      const BACKEND_URL = 'http://192.168.1.9:8000';
 
       setProgress(0.7);
 
@@ -138,3 +138,47 @@ export default function AnalyzingScreen({ route, navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 40,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      marginTop: 32,
+      marginBottom: 12,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: '#7f8c8d',
+      textAlign: 'center',
+      marginBottom: 40,
+    },
+    progressContainer: {
+      width: '100%',
+      marginBottom: 40,
+    },
+    progressBar: {
+      height: 6,
+      backgroundColor: '#e9ecef',
+      borderRadius: 3,
+      overflow: 'hidden',
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: '#4CAF50',
+      borderRadius: 3,
+    },
+    spinner: {
+      marginTop: 20,
+    },
+  });
