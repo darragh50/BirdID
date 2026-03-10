@@ -281,3 +281,209 @@ export default function ResultsScreen({ route, navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    header: {
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      borderBottomColor: '#e9ecef',
+    },
+    backButton: {
+      marginRight: 16,
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+    },
+    scrollView: {
+      flex: 1,
+    },
+    imageContainer: {
+      width: '100%',
+      height: 300,
+      backgroundColor: '#f8f9fa',
+    },
+    birdImage: {
+      width: '100%',
+      height: '100%',
+    },
+    imagePlaceholder: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#f8f9fa',
+    },
+    noImageText: {
+      marginTop: 12,
+      fontSize: 14,
+      color: '#95a5a6',
+    },
+    infoContainer: {
+      padding: 20,
+    },
+    birdName: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      marginBottom: 8,
+    },
+    scientificName: {
+      fontSize: 18,
+      fontStyle: 'italic',
+      color: '#7f8c8d',
+      marginBottom: 24,
+    },
+    confidenceContainer: {
+      marginBottom: 32,
+    },
+    confidenceHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    confidenceLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#2c3e50',
+    },
+    confidenceValue: {
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    confidenceBar: {
+      height: 8,
+      backgroundColor: '#e9ecef',
+      borderRadius: 4,
+      overflow: 'hidden',
+    },
+    confidenceFill: {
+      height: '100%',
+      borderRadius: 4,
+    },
+    playbackContainer: {
+      marginBottom: 32,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: '#2c3e50',
+      marginBottom: 16,
+    },
+    playButton: {
+      borderRadius: 12,
+      overflow: 'hidden',
+    },
+    playButtonGradient: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 16,
+      paddingHorizontal: 24,
+      gap: 12,
+    },
+    playButtonText: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: '#fff',
+    },
+    alternativesContainer: {
+      marginBottom: 32,
+    },
+    alternativeItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      marginBottom: 8,
+    },
+    alternativeInfo: {
+      flex: 1,
+    },
+    alternativeName: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#2c3e50',
+      marginBottom: 2,
+    },
+    alternativeScientific: {
+      fontSize: 14,
+      fontStyle: 'italic',
+      color: '#7f8c8d',
+    },
+    alternativeConfidence: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#7f8c8d',
+    },
+    noBirdContainer: {
+      padding: 40,
+      alignItems: 'center',
+    },
+    noBirdTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      marginTop: 24,
+      marginBottom: 16,
+    },
+    noBirdText: {
+      fontSize: 16,
+      color: '#7f8c8d',
+      textAlign: 'center',
+      lineHeight: 24,
+      marginBottom: 16,
+    },
+    reasonsList: {
+      alignSelf: 'stretch',
+      paddingHorizontal: 20,
+      marginBottom: 24,
+    },
+    reasonItem: {
+      fontSize: 14,
+      color: '#7f8c8d',
+      marginBottom: 8,
+      lineHeight: 20,
+    },
+    tryAgainText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#4CAF50',
+      textAlign: 'center',
+    },
+    actionsContainer: {
+      flexDirection: 'row',
+      padding: 20,
+      gap: 12,
+      paddingBottom: 40,
+    },
+    actionButton: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      backgroundColor: '#f8f9fa',
+      borderRadius: 12,
+      gap: 8,
+    },
+    actionButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#2c3e50',
+    },
+  });
