@@ -250,3 +250,124 @@ export default function MyBirdsScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+    header: {
+      paddingTop: 60,
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      backgroundColor: '#f8f9fa',
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      marginBottom: 4,
+    },
+    headerSubtitle: {
+      fontSize: 16,
+      color: '#7f8c8d',
+    },
+    listContainer: {
+      padding: 20,
+      flexGrow: 1,
+    },
+    recordingCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    recordingIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: '#f8f9fa',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    recordingInfo: {
+      flex: 1,
+    },
+    birdName: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: '#2c3e50',
+      marginBottom: 4,
+    },
+    recordingDate: {
+      fontSize: 14,
+      color: '#7f8c8d',
+      marginBottom: 4,
+    },
+    confidenceBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: '#d4edda',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 4,
+    },
+    confidenceText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#155724',
+    },
+    deleteButton: {
+      padding: 8,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 80,
+      paddingHorizontal: 40,
+    },
+    emptyTitle: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#2c3e50',
+      marginTop: 24,
+      marginBottom: 12,
+    },
+    emptyText: {
+      fontSize: 16,
+      color: '#7f8c8d',
+      textAlign: 'center',
+      lineHeight: 24,
+      marginBottom: 32,
+    },
+    emptyButton: {
+      backgroundColor: '#4CAF50',
+      paddingVertical: 12,
+      paddingHorizontal: 32,
+      borderRadius: 24,
+    },
+    emptyButtonText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#fff',
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+    },
+    loadingText: {
+      marginTop: 16,
+      fontSize: 16,
+      color: '#7f8c8d',
+    },
+  });
