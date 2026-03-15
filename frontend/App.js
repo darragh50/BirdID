@@ -7,14 +7,76 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 // React Native components for UI
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 
 // Import app screens
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
-import HomeScreen from './screens/HomeScreen';
+import HomeTabScreen from './screens/HomeScreen';
+import RecordingScreen from './screens/RecordingScreen';
+import AnalysingScreen from './screens/AnalysingScreen';
+import ResultsScreen from './screens/ResultsScreen';
+import MyBirdsScreen from './screens/MyBirdsScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 // Create a stack navigator instance
 const Stack = createNativeStackNavigator();
+// Create a bottom tab navigator instance
+const Tab = createBottomTabNavigator();
+
+// Bottom Tab Navigator (Main App)
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          // Set icon based on route name and focus state
+          if (route.name === 'HomeTab') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'MyBirds') {
+            iconName = focused ? 'list' : 'list-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+          // Return the appropriate icon component
+          return <Ionicons name={iconName} size={size} color={color} />;
+        }, // Set active and inactive tint colors for tab icons
+        tabBarActiveTintColor: '#4CAF50',
+        tabBarInactiveTintColor: '#95a5a6',
+        tabBarStyle: {
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 60,
+          borderTopWidth: 1,
+          borderTopColor: '#e9ecef',
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen
+        name="HomeTab"
+        component={HomeTabScreen}
+        options={{ tabBarLabel: 'Home' }}
+      />
+      <Tab.Screen
+        name="MyBirds"
+        component={MyBirdsScreen}
+        options={{ tabBarLabel: 'My Birds' }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarLabel: 'Profile' }}
+      />
+    </Tab.Navigator>
+  );
+}
 
 // Navigation component that decides which screens to show based on auth state
 function Navigation() {
@@ -25,7 +87,7 @@ function Navigation() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#27ae60" />
+        <ActivityIndicator size="large" color="#4CAF50" />
       </View>
     );
   }
@@ -33,46 +95,20 @@ function Navigation() {
   return (
     // Navigation container manages navigation tree and state
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#27ae60',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
-          // If user is logged in then show the home screen
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              title: 'Bird Identifier',
-              headerShown: false, // Hide header since we have user info in screen
-            }}
-          />
-        ) : (
-          // If user is not logged in then show login and signup screens
+          // Authenticated Stack
           <>
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{
-                title: 'Sign In',
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="Signup"
-              component={SignupScreen}
-              options={{
-                title: 'Create Account',
-                headerShown: false,
-              }}
-            />
+            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen name="Recording" component={RecordingScreen} />
+            <Stack.Screen name="Analysing" component={AnalysingScreen} />
+            <Stack.Screen name="Results" component={ResultsScreen} />
+          </>
+        ) : (
+          // Auth Stack
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
           </>
         )}
       </Stack.Navigator>
