@@ -115,3 +115,106 @@ export default function ProfileScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#f8f9fa',
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  userCard: {
+    alignItems: 'center',
+    padding: 32,
+    backgroundColor: '#f8f9fa',
+    marginBottom: 20,
+  },
+  avatarContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 4,
+  },
+  userStatus: {
+    fontSize: 14,
+    color: '#27ae60',
+  },
+  optionsContainer: {
+    paddingHorizontal: 20,
+  },
+  optionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+  },
+  optionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f8f9fa',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  optionInfo: {
+    flex: 1,
+  },
+  optionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginBottom: 2,
+  },
+  optionSubtitle: {
+    fontSize: 14,
+    color: '#7f8c8d',
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginTop: 32,
+    marginBottom: 20,
+    paddingVertical: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#e74c3c',
+    gap: 12,
+  },
+  logoutText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#e74c3c',
+  },
+  footerText: {
+    textAlign: 'center',
+    fontSize: 14,
+    color: '#95a5a6',
+    paddingVertical: 40,
+  },
+});
