@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 // Import app screens
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
-import HomeTabScreen from './screens/HomeScreen';
+import HomeTabScreen from './screens/HomeTabScreen';
 import RecordingScreen from './screens/RecordingScreen';
 import AnalysingScreen from './screens/AnalysingScreen';
 import ResultsScreen from './screens/ResultsScreen';

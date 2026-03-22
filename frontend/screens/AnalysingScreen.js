@@ -40,7 +40,7 @@ export default function AnalyzingScreen({ route, navigation }) {
       const token = await getIdToken();
       if (!token) {
         Alert.alert('Error', 'Not authenticated');
-        navigation.navigate('HomeTab');
+        navigation.navigate('Main');
         return;
       }
       // Simulate progress for upload and analysis
@@ -65,7 +65,7 @@ export default function AnalyzingScreen({ route, navigation }) {
       formData.append('duration', duration.toString());
       
       // Define the backend URL, my IP for now
-      const BACKEND_URL = 'http://192.168.1.9:8000';
+      const BACKEND_URL = 'http://192.168.1.8:8000';
 
       setProgress(0.7);
 
@@ -106,7 +106,7 @@ export default function AnalyzingScreen({ route, navigation }) {
         [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('HomeTab'),
+            onPress: () => navigation.navigate('Main'),
           },
         ]
       );

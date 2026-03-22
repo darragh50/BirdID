@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
@@ -47,12 +47,12 @@ export default function RecordingScreen({ navigation }) {
             Animated.timing(wave, {
               toValue: Math.random(),
               duration: 300 + delay,
-              useNativeDriver: true,
+              useNativeDriver: false,
             }),
             Animated.timing(wave, {
               toValue: Math.random(),
               duration: 300 + delay,
-              useNativeDriver: true,
+              useNativeDriver: false,
             }),
           ])
         ).start();
@@ -158,7 +158,7 @@ export default function RecordingScreen({ navigation }) {
       console.log('Recording stopped:', uri);
 
       // Navigate to analyzing screen
-      navigation.replace('Analyzing', {
+      navigation.replace('Analysing', {
         recordingUri: uri,
         duration: recordingDuration,
       });

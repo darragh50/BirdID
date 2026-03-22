@@ -65,6 +65,11 @@ export default function ResultsScreen({ route, navigation }) {
   // Function to play a recording when the user taps on it
   const playRecording = async () => {
     try {
+      // Set audio mode to allow playback in silent mode and prevent recording conflicts
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+      });
       // Stop any currently playing sound to ensure only one plays at a time
       if (sound) {
         // Fully remove existing audio from memory
@@ -118,7 +123,7 @@ export default function ResultsScreen({ route, navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('HomeTab')}
+          onPress={() => navigation.navigate('Main', { screen: 'HomeTab' })}
           style={styles.backButton}
         >
           <Ionicons name="close" size={28} color="#2c3e50" />
@@ -270,8 +275,7 @@ export default function ResultsScreen({ route, navigation }) {
 
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => navigation.navigate('MyBirds')}
-            activeOpacity={0.8}
+            onPress={() => navigation.navigate('Main', { screen: 'MyBirds' })}            activeOpacity={0.8}
           >
             <Ionicons name="list" size={24} color="#3498db" />
             <Text style={styles.actionButtonText}>View My Birds</Text>
