@@ -520,28 +520,3 @@ def delete_recordings_by_filename(filename: str):
             "message": f"Failed to delete file: {str(e)}"
         }
     
-@app.post("/admin/init-db")
-async def initialize_database():
-    """
-    Initialize database tables
-    Temporary endpoint that I will remove after first deployment
-    """
-    try:
-        from databases import Base, engine
-        from models import Recordings
-        
-        print("Creating database tables")
-        Base.metadata.create_all(bind=engine)
-        print("Database tables created successfully")
-        
-        return {
-            "success": True,
-            "message": "Database initialized successfully"
-        }
-    except Exception as e:
-        print(f"Database initialization failed: {e}")
-        return {
-            "success": False,
-            "message": str(e)
-        }
-    
