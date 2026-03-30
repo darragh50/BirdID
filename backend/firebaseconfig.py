@@ -1,17 +1,32 @@
 import firebase_admin
 from firebase_admin import credentials, auth
 import os
+import json
+import base64
 
-# Path to Firebase service account key JSON file
-FIREBASE_CREDENTIALS_PATH = "bird-identifier-9f5e5-firebase-adminsdk-fbsvc-147b255c1d.json"
+# Check if we're in production (railway) or local
+if os.getenv('FIREBASE_CREDENTIALS_BASE64'):
+    # Fpr production decode base64 credentials
+    print("Using Firebase credentials from environment variable")
+    cred_base64 = os.getenv('FIREBASE_CREDENTIALS_BASE64')
+    cred_json = base64.b64decode(cred_base64).decode('utf-8')
+    cred_dict = json.loads(cred_json)
+    cred = credentials.Certificate(cred_dict)
+else:
+    # Locally use file
+    print("Using Firebase credentials from file (Local)")
+    # Path to Firebase service account key JSON file
+    FIREBASE_CREDENTIALS_PATH = "bird-identifier-9f5e5-firebase-adminsdk-fbsvc-147b255c1d.json"
 
-# Check if the credentials file exists 
-if not os.path.exists(FIREBASE_CREDENTIALS_PATH):
-    raise FileNotFoundError(f"Firebase credentials file not found at {FIREBASE_CREDENTIALS_PATH}")
+    # Check if the credentials file exists 
+    if not os.path.exists(FIREBASE_CREDENTIALS_PATH):
+         raise FileNotFoundError(f"Firebase credentials file not found at {FIREBASE_CREDENTIALS_PATH}")
+
+    # Load credentials from the JSON file
+    cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 
 # Initialize Firebase admin SDK
 try: 
-    cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
     firebase_admin.initialize_app(cred)
     print("Firebase admin initialized successfully")
 except Exception as e:
