@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndi
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { BACKEND_URL } from '../config/api';
 
 export default function MyBirdsScreen({ navigation }) {
   // Auth context to get the ID token for authenticated requests
@@ -39,7 +40,6 @@ export default function MyBirdsScreen({ navigation }) {
         return;
       }
 
-      const BACKEND_URL = 'http://192.168.1.8:8000'; // My ip for now
       // Make GET request to /recordings endpoint     
       const response = await fetch(`${BACKEND_URL}/recordings`, {
         method: 'GET',
@@ -83,7 +83,6 @@ export default function MyBirdsScreen({ navigation }) {
             try {
               // We need the Firebase ID token for authorization
               const token = await getIdToken();
-              const BACKEND_URL = 'http://192.168.1.8:8000';
               
               // Make DELETE request to backend
               const response = await fetch(

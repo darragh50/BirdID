@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Animated, Alert} from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { BACKEND_URL } from '../config/api';
 
 export default function AnalyzingScreen({ route, navigation }) {
   // Stores the file path of the audio file - Uniform Resource Identifier
@@ -63,9 +64,6 @@ export default function AnalyzingScreen({ route, navigation }) {
       });
       // Append the duration of the recording as a string
       formData.append('duration', duration.toString());
-      
-      // Define the backend URL, my IP for now
-      const BACKEND_URL = 'http://192.168.1.8:8000';
 
       setProgress(0.7);
 
