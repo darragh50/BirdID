@@ -30,6 +30,7 @@ export default function ResultsScreen({ route, navigation }) {
 
   // Fetch bird image from Wikipedia
   const fetchBirdImage = async (birdName) => {
+    console.log('fetchBirdImage called with:', birdName); 
     try {
       setLoadingImage(true);
       
@@ -41,10 +42,13 @@ export default function ResultsScreen({ route, navigation }) {
 
       // Helper to safely fetch and parse JSON from Wikipedia
       const fetchWikiSummary = async (name) => {
+        console.log('fetchWikiSummary called with:', name);
         const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
         const response = await fetch(url, { headers });
+        console.log('response status:', response.status);
         if (!response.ok) return null;
         const text = await response.text();
+        console.log('Wiki raw response:', text.substring(0, 150));
         try {
           return JSON.parse(text);
         } catch {
@@ -329,6 +333,7 @@ const styles = StyleSheet.create({
       width: '100%',
       height: 300,
       backgroundColor: '#f8f9fa',
+      overflow: 'hidden',
     },
     birdImage: {
       width: '100%',
@@ -336,7 +341,7 @@ const styles = StyleSheet.create({
     },
     imagePlaceholder: {
       width: '100%',
-      height: '100%',
+      height: '300',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#f8f9fa',
