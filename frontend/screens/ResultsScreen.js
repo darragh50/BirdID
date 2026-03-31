@@ -35,23 +35,34 @@ export default function ResultsScreen({ route, navigation }) {
       
       // Wikimedia requires a User-Agent header to stop standalone APKs getting blocked
       const headers = {
-        'User-Agent': 'BirdIdentifierApp/1.0',
+        'User-Agent': 'BirdIdentifierApp/1.0 (https://github.com/darraghr/birdidentifier; contact@example.com)',
+        'Accept': 'application/json',
+      };
+
+      // Helper to safely fetch and parse JSON from Wikipedia
+      const fetchWikiSummary = async (name) => {
+        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
+        const response = await fetch(url, { headers });
+        if (!response.ok) return null;
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch {
+          return null;
+        }
       };
 
       // Try with common name first
-      let url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(birdName)}`;
-      let response = await fetch(url);
-      let data = await response.json();
+      let data = await fetchWikiSummary(birdName);
 
       // If no image, try with scientific name
-      if (!data.thumbnail && birdData.all_detections && birdData.all_detections[0]) {
+      if ((!data || !data.thumbnail) && birdData.all_detections && birdData.all_detections[0]) {
         const scientificName = birdData.all_detections[0].scientific_name;
-        url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(scientificName)}`;
-        response = await fetch(url);
-        data = await response.json();
+        data = await fetchWikiSummary(scientificName);
       }
+
       // If we have a thumbnail, use it 
-      if (data.thumbnail && data.thumbnail.source) {
+      if (data?.thumbnail?.source) {
         setBirdImage(data.thumbnail.source);
       } else {
         setBirdImage(null);
