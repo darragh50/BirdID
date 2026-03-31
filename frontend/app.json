@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Bird Identifier",
+    "slug": "bird-identifier",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,6 +17,7 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.darraghr.birdidentifier",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "This app needs access to your microphone to record bird songs for identification."
       }
@@ -27,8 +28,10 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET"
       ],
+      "package": "com.darraghr.birdidentifier",
       "edgeToEdgeEnabled": true
     },
     "web": {
