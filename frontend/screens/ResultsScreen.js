@@ -33,6 +33,11 @@ export default function ResultsScreen({ route, navigation }) {
     try {
       setLoadingImage(true);
       
+      // Wikimedia requires a User-Agent header to stop standalone APKs getting blocked
+      const headers = {
+        'User-Agent': 'BirdIdentifierApp/1.0',
+      };
+
       // Try with common name first
       let url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(birdName)}`;
       let response = await fetch(url);
@@ -45,11 +50,9 @@ export default function ResultsScreen({ route, navigation }) {
         response = await fetch(url);
         data = await response.json();
       }
-      // If we have a thumbnail, use it (try to get a higher resolution version)
+      // If we have a thumbnail, use it 
       if (data.thumbnail && data.thumbnail.source) {
-        // Get higher resolution image
-        const imageUrl = data.thumbnail.source.replace(/\/\d+px-/, '/500px-');
-        setBirdImage(imageUrl);
+        setBirdImage(data.thumbnail.source);
       } else {
         setBirdImage(null);
       }
