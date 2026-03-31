@@ -30,41 +30,17 @@ export default function ResultsScreen({ route, navigation }) {
 
   // Fetch bird image from Wikipedia
   const fetchBirdImage = async (birdName) => {
-    console.log('fetchBirdImage called with:', birdName); 
+    //console.log('fetchBirdImage called with:', birdName); 
     try {
-      setLoadingImage(true);
-      
-      // Wikimedia requires a User-Agent header to stop standalone APKs getting blocked
-      const headers = {
-        'User-Agent': 'BirdIdentifierApp/1.0 (https://github.com/darraghr/birdidentifier; contact@example.com)',
-        'Accept': 'application/json',
-      };
-
-      // Helper to safely fetch and parse JSON from Wikipedia
-      const fetchWikiSummary = async (name) => {
-        try{
-        console.log('fetchWikiSummary called with:', name);
-        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
-        const response = await fetch(url, { headers });
-        const data = await response.json();
-        console.log('response status:', response.status);
-        return data;
-        } catch {
-          return null;
-        }
-      };
-
-      // Try with common name first
-      let data = await fetchWikiSummary(birdName);
-
-      // If no image, try with scientific name
-      if ((!data || !data.thumbnail) && birdData.all_detections && birdData.all_detections[0]?.scientific_name) {
-        const scientificName = birdData.all_detections[0].scientific_name;
-        data = await fetchWikiSummary(scientificName);
-      }
-
-      setBirdImage(data?.thumbnail?.source ?? null);
-
+      //console.log('fetchWikiSummary called with:', name);
+      const scientificName = birdData.all_detections?.[0]?.scientific_name;
+      const query = encodeURIComponent(scientificName || birdName);
+      const url = `https://api.inaturalist.org/v1/taxa?q=${query}&limit=1`;
+      const response = await fetch(url);
+      const data = await response.json();
+      const imageUrl = data.results?.[0]?.default_photo?.medium_url ?? null;
+      //console.log('response status:', response.status);
+      setBirdImage(imageUrl);
     } catch (error) {
       console.error('Error fetching bird image:', error);
       setBirdImage(null);
