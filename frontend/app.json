@@ -31,7 +31,8 @@
         "android.permission.INTERNET"
       ],
       "package": "com.darraghr.birdidentifier",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
