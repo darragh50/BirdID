@@ -42,15 +42,13 @@ export default function ResultsScreen({ route, navigation }) {
 
       // Helper to safely fetch and parse JSON from Wikipedia
       const fetchWikiSummary = async (name) => {
+        try{
         console.log('fetchWikiSummary called with:', name);
         const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
         const response = await fetch(url, { headers });
+        const data = await response.json();
         console.log('response status:', response.status);
-        if (!response.ok) return null;
-        const text = await response.text();
-        console.log('Wiki raw response:', text.substring(0, 150));
-        try {
-          return JSON.parse(text);
+        return data;
         } catch {
           return null;
         }
@@ -60,22 +58,17 @@ export default function ResultsScreen({ route, navigation }) {
       let data = await fetchWikiSummary(birdName);
 
       // If no image, try with scientific name
-      if ((!data || !data.thumbnail) && birdData.all_detections && birdData.all_detections[0]) {
+      if ((!data || !data.thumbnail) && birdData.all_detections && birdData.all_detections[0]?.scientific_name) {
         const scientificName = birdData.all_detections[0].scientific_name;
         data = await fetchWikiSummary(scientificName);
       }
 
-      // If we have a thumbnail, use it 
-      if (data?.thumbnail?.source) {
-        setBirdImage(data.thumbnail.source);
-      } else {
-        setBirdImage(null);
-      }
-      // Set loading to false after fetching
-      setLoadingImage(false);
+      setBirdImage(data?.thumbnail?.source ?? null);
+
     } catch (error) {
       console.error('Error fetching bird image:', error);
       setBirdImage(null);
+    } finally {
       setLoadingImage(false);
     }
   };
@@ -341,7 +334,7 @@ const styles = StyleSheet.create({
     },
     imagePlaceholder: {
       width: '100%',
-      height: '300',
+      height: 300,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#f8f9fa',
